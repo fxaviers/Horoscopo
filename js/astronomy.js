@@ -15,25 +15,15 @@ const MS_PER_DAY = 86400000;
 const SYNODIC_MONTH_DAYS = 29.530588861;
 const DELTA_T_DAYS = 69.2 / 86400; // Aproximacao moderna de TD - UT (~69.2s)
 
-/** @type {ReadonlyArray<{id: string, name: string, state: string, lat: number, lng: number, tz: string}>} */
-export const BRAZIL_CITIES = [
-  { id: 'sao-paulo', name: 'São Paulo', state: 'SP', lat: -23.5505, lng: -46.6333, tz: 'America/Sao_Paulo' },
-  { id: 'rio-de-janeiro', name: 'Rio de Janeiro', state: 'RJ', lat: -22.9068, lng: -43.1729, tz: 'America/Sao_Paulo' },
-  { id: 'belo-horizonte', name: 'Belo Horizonte', state: 'MG', lat: -19.9167, lng: -43.9345, tz: 'America/Sao_Paulo' },
-  { id: 'brasilia', name: 'Brasília', state: 'DF', lat: -15.7975, lng: -47.8919, tz: 'America/Sao_Paulo' },
-  { id: 'salvador', name: 'Salvador', state: 'BA', lat: -12.9714, lng: -38.5014, tz: 'America/Bahia' },
-  { id: 'fortaleza', name: 'Fortaleza', state: 'CE', lat: -3.7319, lng: -38.5267, tz: 'America/Fortaleza' },
-  { id: 'recife', name: 'Recife', state: 'PE', lat: -8.0476, lng: -34.8770, tz: 'America/Recife' },
-  { id: 'porto-alegre', name: 'Porto Alegre', state: 'RS', lat: -30.0346, lng: -51.2177, tz: 'America/Sao_Paulo' },
-  { id: 'curitiba', name: 'Curitiba', state: 'PR', lat: -25.4284, lng: -49.2733, tz: 'America/Sao_Paulo' },
-  { id: 'florianopolis', name: 'Florianópolis', state: 'SC', lat: -27.5954, lng: -48.5480, tz: 'America/Sao_Paulo' },
-  { id: 'manaus', name: 'Manaus', state: 'AM', lat: -3.1190, lng: -60.0217, tz: 'America/Manaus' },
-  { id: 'belem', name: 'Belém', state: 'PA', lat: -1.4558, lng: -48.4902, tz: 'America/Belem' },
-  { id: 'goiania', name: 'Goiânia', state: 'GO', lat: -16.6869, lng: -49.2648, tz: 'America/Sao_Paulo' },
-  { id: 'natal', name: 'Natal', state: 'RN', lat: -5.7945, lng: -35.2110, tz: 'America/Fortaleza' },
-  { id: 'joao-pessoa', name: 'João Pessoa', state: 'PB', lat: -7.1195, lng: -34.8450, tz: 'America/Fortaleza' },
-  { id: 'campo-grande', name: 'Campo Grande', state: 'MS', lat: -20.4697, lng: -54.6201, tz: 'America/Campo_Grande' },
-];
+/** @type {{id: string, name: string, state: string, lat: number, lng: number, tz: string}} */
+export const FIXED_LOCATION = {
+  id: 'sao-joaquim-da-barra',
+  name: 'São Joaquim da Barra',
+  state: 'SP',
+  lat: -20.5808,
+  lng: -47.855,
+  tz: 'America/Sao_Paulo',
+};
 
 const PHASE_KEYS = ['new', 'first-quarter', 'full', 'last-quarter'];
 const MAIN_PHASE_NAMES = {
@@ -42,19 +32,6 @@ const MAIN_PHASE_NAMES = {
   full: 'Lua Cheia',
   'last-quarter': 'Quarto Minguante',
 };
-
-/**
- * Retorna a cidade correspondente ao id, com fallback para 'sao-paulo'.
- * @param {string} id
- */
-export function getCityById(id) {
-  if (typeof id === 'string') {
-    const normalized = id.trim().toLowerCase();
-    const match = BRAZIL_CITIES.find((c) => c.id === normalized);
-    if (match) return match;
-  }
-  return BRAZIL_CITIES[0];
-}
 
 function toDate(value) {
   return value instanceof Date ? value : new Date(value);
@@ -404,7 +381,7 @@ function calendarDaysBetween(fromDate, toDateTarget, timeZone) {
  * @param {string} [timeZone]
  * @returns {{ phaseKey: 'new'|'first-quarter'|'full'|'last-quarter', namePt: string, instant: Date, datePt: string, timePt: string, daysUntil: number, relativePt: string }}
  */
-export function getNextMoonChange(date = new Date(), timeZone = 'America/Sao_Paulo') {
+export function getNextMoonChange(date = new Date(), timeZone = FIXED_LOCATION.tz) {
   const d = toDate(date);
   const t = d.getTime();
   const jd = dateToJulianDay(d);
@@ -580,38 +557,37 @@ async function fetchTimesApi(city, signal) {
 }
 
 /**
- * Carrega dados de Lua e Sol para a cidade informada, usando a API ao vivo (com cache diario)
+ * Carrega dados de Lua e Sol para São Joaquim da Barra, SP, usando a API ao vivo (com cache diario)
  * e caindo perfeitamente para o calculo local NOAA + Jean Meeus quando offline ou em datas especificas.
  *
- * @param {string} cityId
  * @param {Date | number | string} [date]
  * @param {{ signal?: AbortSignal }} [options]
  */
-export async function loadMoonAndSun(cityId, date = new Date(), { signal } = {}) {
+export async function loadMoonAndSun(date = new Date(), { signal } = {}) {
   if (signal?.aborted) throw createAbortError();
 
   const d = toDate(date);
-  const city = getCityById(cityId);
-  const targetDateISO = formatDateISOInTimeZone(d, city.tz);
-  const todayInCityISO = formatDateISOInTimeZone(new Date(), city.tz);
-  const isToday = targetDateISO === todayInCityISO;
+  const location = FIXED_LOCATION;
+  const targetDateISO = formatDateISOInTimeZone(d, location.tz);
+  const todayInLocationISO = formatDateISOInTimeZone(new Date(), location.tz);
+  const isToday = targetDateISO === todayInLocationISO;
 
   const moon = getCurrentMoonPhase(d);
-  const nextMoonChange = getNextMoonChange(d, city.tz);
-  const calculatedSun = calculateNoaaSun(city, d);
+  const nextMoonChange = getNextMoonChange(d, location.tz);
+  const calculatedSun = calculateNoaaSun(location, d);
 
   if (isToday) {
-    const cached = getCachedAstro(city.id, targetDateISO);
-    if (cached && cached.sun?.sunrisePt && cached.sun?.sunsetPt && cached.sun?.daylightPt) {
+    const cached = getCachedAstro(location.id, targetDateISO);
+    if (cached && cached.sun?.sunrisePt && cached.sun?.sunsetPt) {
       const mergedMoon =
         typeof cached.illuminationPct === 'number'
           ? { ...moon, illuminationPct: cached.illuminationPct }
           : moon;
       return {
-        city,
+        location,
         moon: mergedMoon,
         nextMoonChange,
-        sun: cached.sun,
+        sun: { sunrisePt: cached.sun.sunrisePt, sunsetPt: cached.sun.sunsetPt },
         source: 'live',
       };
     }
@@ -619,15 +595,10 @@ export async function loadMoonAndSun(cityId, date = new Date(), { signal } = {})
     const isOnline = typeof navigator === 'undefined' || navigator.onLine !== false;
     if (isOnline) {
       try {
-        const apiData = await fetchTimesApi(city, signal);
+        const apiData = await fetchTimesApi(location, signal);
         if (apiData && apiData.date === targetDateISO) {
           const sunrisePt = parseApiAmPmTime(apiData?.sun?.events?.sunrise);
           const sunsetPt = parseApiAmPmTime(apiData?.sun?.events?.sunset);
-          const durationSec = apiData?.sun?.daylight?.duration_seconds;
-          const daylightPt =
-            typeof durationSec === 'number' && Number.isFinite(durationSec) && durationSec > 0
-              ? formatDaylightDuration(durationSec)
-              : calculatedSun.daylightPt;
 
           if (sunrisePt && sunsetPt) {
             const liveIllumRaw = apiData?.moon?.details?.illumination_pct;
@@ -636,14 +607,14 @@ export async function loadMoonAndSun(cityId, date = new Date(), { signal } = {})
                 ? Math.round(liveIllumRaw)
                 : moon.illuminationPct;
 
-            const sun = { sunrisePt, sunsetPt, daylightPt };
-            saveCachedAstro(city.id, targetDateISO, {
+            const sun = { sunrisePt, sunsetPt };
+            saveCachedAstro(location.id, targetDateISO, {
               sun,
               illuminationPct: liveIllum,
             });
 
             return {
-              city,
+              location,
               moon: { ...moon, illuminationPct: liveIllum },
               nextMoonChange,
               sun,
@@ -658,10 +629,10 @@ export async function loadMoonAndSun(cityId, date = new Date(), { signal } = {})
   }
 
   return {
-    city,
+    location,
     moon,
     nextMoonChange,
-    sun: calculatedSun,
+    sun: { sunrisePt: calculatedSun.sunrisePt, sunsetPt: calculatedSun.sunsetPt },
     source: 'calculated',
   };
 }

@@ -101,38 +101,52 @@ export function renderMoonSvg(phaseFraction, illuminationPct, namePt) {
 }
 
 /**
- * Renders a small monochrome phase badge SVG for the 4 principal lunar phases
- * using Southern Hemisphere orientation.
+ * Renders a lunar phase SVG for the 4 principal lunar phases
+ * matching the warm Moon card illustration in Southern Hemisphere orientation.
  *
  * @param {'new'|'first-quarter'|'full'|'last-quarter'} phaseKey
  * @returns {string} SVG markup string (aria-hidden)
  */
 export function renderPhaseBadgeSvg(phaseKey) {
-  let inner = '';
+  const cx = 50;
+  const cy = 50;
+  const r = 40;
+  const topY = cy - r;
+  const bottomY = cy + r;
+
+  let lit = '';
   switch (phaseKey) {
     case 'new':
-      inner = `<circle cx="14" cy="14" r="10" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="2" />`;
+      lit = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#8A93AA" stroke-width="1.5" stroke-opacity="0.7" />`;
       break;
     case 'first-quarter':
       // Southern Hemisphere: left half illuminated
-      inner = `<circle cx="14" cy="14" r="10" fill="none" stroke="currentColor" stroke-width="2" />
-  <path d="M 14 4 A 10 10 0 0 0 14 24 Z" fill="currentColor" />`;
+      lit = `<path d="M ${cx} ${topY} A ${r} ${r} 0 0 0 ${cx} ${bottomY} Z" fill="#F6D28B" />`;
       break;
     case 'full':
-      inner = `<circle cx="14" cy="14" r="10" fill="currentColor" stroke="currentColor" stroke-width="2" />`;
+      lit = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#F6D28B" />`;
       break;
     case 'last-quarter':
       // Southern Hemisphere: right half illuminated
-      inner = `<circle cx="14" cy="14" r="10" fill="none" stroke="currentColor" stroke-width="2" />
-  <path d="M 14 4 A 10 10 0 0 1 14 24 Z" fill="currentColor" />`;
+      lit = `<path d="M ${cx} ${topY} A ${r} ${r} 0 0 1 ${cx} ${bottomY} Z" fill="#F6D28B" />`;
       break;
     default:
-      inner = `<circle cx="14" cy="14" r="10" fill="none" stroke="currentColor" stroke-width="2" />`;
+      lit = '';
       break;
   }
 
-  return `<svg class="phase-badge-svg" viewBox="0 0 28 28" aria-hidden="true">
-  ${inner}
+  const craters = [
+    `<circle cx="38" cy="34" r="5.5" fill="#181F30" fill-opacity="0.14" />`,
+    `<circle cx="63" cy="42" r="7" fill="#181F30" fill-opacity="0.12" />`,
+    `<circle cx="46" cy="63" r="4.5" fill="#181F30" fill-opacity="0.13" />`,
+    `<circle cx="60" cy="68" r="3.2" fill="#181F30" fill-opacity="0.11" />`,
+  ].join('');
+
+  return `<svg class="phase-badge-svg" viewBox="0 0 100 100" aria-hidden="true">
+  <circle cx="${cx}" cy="${cy}" r="${r}" fill="#22293D" />
+  ${lit}
+  ${craters}
+  <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#505B7A" stroke-width="2" />
 </svg>`;
 }
 

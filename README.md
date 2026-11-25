@@ -1,6 +1,6 @@
 # Horóscopo do Dia — PWA em Português (pt-BR)
 
-Aplicativo web progressivo (PWA) leve, acessível e *offline-first* em **Português (pt-BR)** para leitura diária, semanal e mensal do horóscopo, acompanhado de **Cor do dia**, **Número da sorte**, **Energia do dia** e da seção **Lua e Sol de Hoje** (fase lunar atual, próxima mudança da Lua, nascer/pôr do sol e duração do dia em 16 capitais brasileiras).
+Aplicativo web progressivo (PWA) leve, acessível e *offline-first* em **Português (pt-BR)** para leitura diária, semanal e mensal do horóscopo, acompanhado de **Cor do dia**, **Número da sorte**, **Energia do dia**, aviso automático quando há nova previsão semanal/mensal e da seção **Lua e Sol de Hoje** (fase lunar atual, próxima mudança da Lua e nascer/pôr do sol para **São Joaquim da Barra, SP**).
 
 Construído com HTML5, CSS3 moderno e JavaScript ES Modules puros (zero build e zero dependências externas).
 
@@ -68,4 +68,4 @@ O aplicativo fica em `horoscopo/` usando caminhos relativos (`./`) e o repositó
 
 1. Abra o **Google Chrome** no celular Android e acesse o link HTTPS do aplicativo (`.../horoscopo/`).
 2. Toque no botão **Instalar** na barra superior do aplicativo (quando disponível) **ou** toque no menu do Chrome (`⋮`, no canto superior direito) e escolha **Instalar aplicativo** / **Adicionar à tela inicial**.
-3. Confirme a instalação. O ícone **Horóscopo** aparecerá na tela inicial do celular, abrindo em modo aplicativo sem barras do navegador e funcionando mesmo sem internet com a última previsão salva e os cálculos astronômicos locais da Lua e do Sol.
+3. Confirme a instalação. O ícone **Horóscopo** aparecerá na tela inicial do celular, abrindo em modo aplicativo sem barras do navegador e funcionando mesmo sem internet com a última previsão salva e os cálculos astronômicos locais da Lua e do Sol para São Joaquim da Barra, SP.

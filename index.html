@@ -25,10 +25,7 @@
   <div class="app-shell">
     <header class="app-header">
       <div class="header-top">
-        <div class="greeting-block">
-          <p id="greeting-text" class="greeting-text">Bom dia!</p>
-          <p id="today-date" class="today-date"></p>
-        </div>
+        <p id="greeting-text" class="greeting-text">Bom dia!</p>
 
         <div class="header-controls" role="group" aria-label="Controles de leitura e tema">
           <div class="font-controls" role="group" aria-label="Tamanho da letra">
@@ -80,6 +77,8 @@
             <span>Instalar</span>
           </button>
         </div>
+
+        <p id="today-date" class="today-date"></p>
       </div>
     </header>
 
@@ -134,7 +133,10 @@
               aria-controls="panel-weekly"
               tabindex="-1"
               data-period="weekly"
-            >Semana</button>
+            >
+              <span class="tab-label">Semana</span>
+              <span class="tab-new-badge" data-tab-badge="weekly" hidden>Novo</span>
+            </button>
             <button
               type="button"
               id="tab-monthly"
@@ -144,7 +146,10 @@
               aria-controls="panel-monthly"
               tabindex="-1"
               data-period="monthly"
-            >Mês</button>
+            >
+              <span class="tab-label">Mês</span>
+              <span class="tab-new-badge" data-tab-badge="monthly" hidden>Novo</span>
+            </button>
           </div>
 
           <div
@@ -199,22 +204,27 @@
         <section class="extras-section" aria-labelledby="extras-title">
           <h2 id="extras-title" class="section-heading">Destaques de hoje</h2>
           <div class="extras-grid">
-            <article class="extra-card">
+            <article class="extra-card extra-card-color">
               <span class="extra-label">Cor do dia</span>
-              <div class="color-value">
-                <span id="extra-color-swatch" class="color-swatch" aria-hidden="true"></span>
-                <span id="extra-color-name" class="extra-value">—</span>
-              </div>
+              <span id="extra-color-swatch" class="color-swatch" aria-hidden="true"></span>
+              <span id="extra-color-name" class="extra-value">—</span>
             </article>
 
-            <article class="extra-card">
+            <article class="extra-card extra-card-number">
               <span class="extra-label">Número da sorte</span>
               <span id="extra-number" class="extra-value extra-number">—</span>
             </article>
 
-            <article class="extra-card">
-              <span class="extra-label">Energia do dia</span>
-              <span id="extra-energy" class="extra-value">—</span>
+            <article class="extra-card extra-card-energy">
+              <span class="extra-energy-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3l1.9 5.3L19 10l-5.1 1.7L12 17l-1.9-5.3L5 10l5.1-1.7L12 3z"/>
+                </svg>
+              </span>
+              <div class="extra-energy-info">
+                <span class="extra-label">Energia do dia</span>
+                <span id="extra-energy" class="extra-value">—</span>
+              </div>
             </article>
           </div>
         </section>
@@ -222,77 +232,77 @@
         <!-- Seção Lua e Sol de Hoje -->
         <section class="astro-section" aria-labelledby="astro-title">
           <div class="astro-header">
-            <div class="astro-title-group">
-              <h2 id="astro-title" class="section-heading">Lua e Sol de Hoje</h2>
-              <p id="astro-city-label" class="astro-city-label">São Paulo, SP</p>
-            </div>
-
-            <button type="button" id="btn-change-city" class="secondary-btn">
-              Trocar cidade
-            </button>
+            <h2 id="astro-title" class="section-heading">Lua e Sol de Hoje</h2>
+            <p class="astro-city-label">São Joaquim da Barra, SP</p>
           </div>
 
-          <div class="astro-grid">
+          <div class="moon-grid">
             <article class="astro-card moon-today-card">
               <h3 class="astro-card-title">Lua de hoje</h3>
-              <div class="moon-today-body">
-                <div id="moon-svg-slot" class="moon-svg-slot"></div>
-                <div class="moon-today-info">
-                  <p id="moon-detail" class="astro-primary">—</p>
-                  <p id="moon-phase-name" class="astro-secondary">—</p>
-                  <p id="moon-illumination" class="astro-meta">—</p>
-                </div>
-              </div>
+              <div id="moon-svg-slot" class="moon-svg-slot"></div>
+              <p id="moon-phase-name" class="astro-primary">—</p>
+              <p id="moon-illumination" class="astro-meta">—</p>
             </article>
 
             <article class="astro-card next-moon-card">
-              <h3 class="astro-card-title">Próxima mudança da lua</h3>
-              <div class="next-moon-body">
-                <span id="next-moon-badge" class="next-moon-badge" aria-hidden="true"></span>
-                <div class="next-moon-info">
-                  <p id="next-moon-name" class="astro-primary">—</p>
-                  <p id="next-moon-datetime" class="astro-secondary">—</p>
-                  <p id="next-moon-relative" class="astro-meta">—</p>
-                </div>
-              </div>
-            </article>
-
-            <article class="astro-card sun-card">
-              <h3 class="astro-card-title">Nascer e pôr do sol</h3>
-              <dl class="sun-times-list">
-                <div class="sun-time-row">
-                  <dt>Nascer do sol</dt>
-                  <dd id="sun-sunrise" class="astro-primary">—</dd>
-                </div>
-                <div class="sun-time-row">
-                  <dt>Pôr do sol</dt>
-                  <dd id="sun-sunset" class="astro-primary">—</dd>
-                </div>
-                <div class="sun-time-row">
-                  <dt>Duração do dia</dt>
-                  <dd id="sun-daylight" class="astro-secondary">—</dd>
-                </div>
-              </dl>
+              <h3 class="astro-card-title">Próxima lua</h3>
+              <span id="next-moon-badge" class="next-moon-badge" aria-hidden="true"></span>
+              <p id="next-moon-name" class="astro-primary">—</p>
+              <p id="next-moon-relative" class="astro-meta">—</p>
             </article>
           </div>
+
+          <article class="astro-card sun-card" aria-labelledby="sun-card-title">
+            <h3 id="sun-card-title" class="astro-card-title">Nascer e pôr do sol</h3>
+            <dl class="sun-grid">
+              <div class="sun-item">
+                <span class="sun-icon" aria-hidden="true">
+                  <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 4v5M6.9 9.9l2.1 2.1M21.1 9.9L19 12M4 20h20M7 20a7 7 0 0 1 14 0"/>
+                    <path d="M11 7l3-3 3 3"/>
+                  </svg>
+                </span>
+                <dt class="sun-label">Nascer do sol</dt>
+                <dd id="sun-sunrise" class="sun-time">—</dd>
+              </div>
+
+              <div class="sun-item">
+                <span class="sun-icon" aria-hidden="true">
+                  <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 9V4M6.9 9.9l2.1 2.1M21.1 9.9L19 12M4 20h20M7 20a7 7 0 0 1 14 0"/>
+                    <path d="M11 6l3 3 3-3"/>
+                  </svg>
+                </span>
+                <dt class="sun-label">Pôr do sol</dt>
+                <dd id="sun-sunset" class="sun-time">—</dd>
+              </div>
+            </dl>
+          </article>
         </section>
       </section>
     </main>
   </div>
 
-  <!-- Native modal dialog para escolher cidade -->
-  <dialog id="city-dialog" class="city-dialog" closedby="any" aria-labelledby="city-dialog-title">
-    <div class="city-dialog-surface">
-      <div class="city-dialog-header">
-        <h2 id="city-dialog-title" class="section-heading">Escolha sua cidade</h2>
-        <button type="button" id="btn-close-city" class="ctrl-btn close-dialog-btn">
-          Fechar
-        </button>
+  <!-- Aviso de nova previsão semanal/mensal -->
+  <div class="toast-region" role="region" aria-label="Avisos de novas previsões">
+    <div id="update-toast" class="update-toast" popover="manual" hidden>
+      <div class="update-toast-content">
+        <p id="update-toast-message" class="update-toast-message"></p>
+        <div id="update-toast-actions" class="update-toast-actions">
+          <button type="button" id="btn-toast-weekly" class="toast-action-btn" hidden>Ver semana</button>
+          <button type="button" id="btn-toast-monthly" class="toast-action-btn" hidden>Ver mês</button>
+          <button
+            type="button"
+            id="btn-toast-close"
+            class="toast-close-btn"
+            popovertarget="update-toast"
+            popovertargetaction="hide"
+          >Fechar</button>
+        </div>
       </div>
-      <p class="city-dialog-hint">Os horários do Sol e da Lua usam a cidade selecionada.</p>
-      <ul id="city-list" class="city-list"></ul>
     </div>
-  </dialog>
+    <div id="toast-live-announcer" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
+  </div>
 
   <script>
     if (window.location.protocol === 'file:') {

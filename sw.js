@@ -1,4 +1,4 @@
-const CACHE_NAME = 'horoscopo-v2';
+const CACHE_NAME = 'horoscopo-v3';
 
 const ASSETS = [
   './',

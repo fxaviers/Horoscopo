@@ -11,21 +11,17 @@ import {
   savePeriod,
   getFontLevel,
   saveFontLevel,
-  getSavedCityId,
-  saveCityId,
   getColorSchemeOverride,
   saveColorSchemeOverride,
+  getSeenPeriods,
+  saveSeenPeriod,
 } from './storage.js';
 import {
   getLocalDateISO,
   fetchHoroscope,
   prefetchAllPeriods,
 } from './api.js';
-import {
-  BRAZIL_CITIES,
-  getCityById,
-  loadMoonAndSun,
-} from './astronomy.js';
+import { loadMoonAndSun } from './astronomy.js';
 import {
   renderMoonSvg,
   renderZodiacSvg,
@@ -62,41 +58,49 @@ const el = {
   tabsBar: document.querySelector('.tabs-bar'),
   tabButtons: Array.from(document.querySelectorAll('[role="tab"]')),
   tabPanels: Array.from(document.querySelectorAll('[role="tabpanel"]')),
+  tabBadges: {
+    weekly: document.querySelector('[data-tab-badge="weekly"]'),
+    monthly: document.querySelector('[data-tab-badge="monthly"]'),
+  },
 
   extraColorSwatch: document.getElementById('extra-color-swatch'),
   extraColorName: document.getElementById('extra-color-name'),
   extraNumber: document.getElementById('extra-number'),
   extraEnergy: document.getElementById('extra-energy'),
 
-  astroCityLabel: document.getElementById('astro-city-label'),
-  btnChangeCity: document.getElementById('btn-change-city'),
   moonSvgSlot: document.getElementById('moon-svg-slot'),
-  moonDetail: document.getElementById('moon-detail'),
   moonPhaseName: document.getElementById('moon-phase-name'),
   moonIllumination: document.getElementById('moon-illumination'),
   nextMoonBadge: document.getElementById('next-moon-badge'),
   nextMoonName: document.getElementById('next-moon-name'),
-  nextMoonDatetime: document.getElementById('next-moon-datetime'),
   nextMoonRelative: document.getElementById('next-moon-relative'),
   sunSunrise: document.getElementById('sun-sunrise'),
   sunSunset: document.getElementById('sun-sunset'),
-  sunDaylight: document.getElementById('sun-daylight'),
 
-  cityDialog: document.getElementById('city-dialog'),
-  btnCloseCity: document.getElementById('btn-close-city'),
-  cityList: document.getElementById('city-list'),
+  updateToast: document.getElementById('update-toast'),
+  updateToastMessage: document.getElementById('update-toast-message'),
+  btnToastWeekly: document.getElementById('btn-toast-weekly'),
+  btnToastMonthly: document.getElementById('btn-toast-monthly'),
+  btnToastClose: document.getElementById('btn-toast-close'),
+  toastLiveAnnouncer: document.getElementById('toast-live-announcer'),
 };
 
 const state = {
   signId: null,
   period: 'daily',
   fontLevel: 1,
-  cityId: 'sao-paulo',
   lastDateISO: getLocalDateISO(),
   deferredInstallPrompt: null,
   horoscopeAbort: null,
   astroAbort: null,
   prefetchedSignId: null,
+  unreadPeriods: new Set(),
+  pendingSignatures: { weekly: null, monthly: null },
+  activeToastKey: null,
+  dismissedToastKey: null,
+  priorFocusEl: null,
+  pendingCloseOpts: null,
+  updateCheckSeq: 0,
 };
 
 function getGreeting(date = new Date()) {
@@ -294,6 +298,196 @@ async function loadActiveHoroscope(signId, period) {
   }
 }
 
+function computeTextSignature(date, text) {
+  const input = `${String(date || '').trim()}|${String(text || '').trim()}`;
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < input.length; i += 1) {
+    hash ^= input.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return (hash >>> 0).toString(16).padStart(8, '0');
+}
+
+function isValidForecastResult(result) {
+  return Boolean(
+    result &&
+      typeof result.text === 'string' &&
+      result.text.trim() &&
+      !result.text.startsWith('No momento não foi possível')
+  );
+}
+
+function syncTabBadges() {
+  for (const period of ['weekly', 'monthly']) {
+    const badge = el.tabBadges[period];
+    if (badge) {
+      badge.hidden = !state.unreadPeriods.has(period);
+    }
+  }
+}
+
+function announceToast(message, hasActions) {
+  const announcement = hasActions ? `${message} Ações disponíveis.` : message;
+  if (typeof document.ariaNotify === 'function') {
+    try {
+      document.ariaNotify(announcement);
+      return;
+    } catch {
+      // Fallback para live region abaixo
+    }
+  }
+  if (el.toastLiveAnnouncer) {
+    el.toastLiveAnnouncer.textContent = '';
+    window.requestAnimationFrame(() => {
+      if (el.toastLiveAnnouncer) {
+        el.toastLiveAnnouncer.textContent = announcement;
+      }
+    });
+  }
+}
+
+function finalizeToastClose({ markDismissed = false, restoreFocus = false } = {}) {
+  if (markDismissed && state.activeToastKey) {
+    state.dismissedToastKey = state.activeToastKey;
+  }
+  el.updateToast.classList.remove('is-open');
+  el.updateToast.hidden = true;
+
+  if (restoreFocus) {
+    const target =
+      state.priorFocusEl && state.priorFocusEl.isConnected
+        ? state.priorFocusEl
+        : document.getElementById('main-content');
+    if (target && typeof target.focus === 'function') {
+      target.focus();
+    }
+  }
+  state.priorFocusEl = null;
+}
+
+function hideUpdateToast({ markDismissed = false, restoreFocus = false } = {}) {
+  if (!el.updateToast) return;
+  const hasNativePopover = 'showPopover' in el.updateToast;
+  if (hasNativePopover && el.updateToast.matches(':popover-open')) {
+    state.pendingCloseOpts = { markDismissed, restoreFocus };
+    try {
+      el.updateToast.hidePopover();
+      return;
+    } catch {
+      state.pendingCloseOpts = null;
+    }
+  }
+  finalizeToastClose({ markDismissed, restoreFocus });
+}
+
+function showUpdateToast({ message, showWeekly, showMonthly, key }) {
+  if (!el.updateToast || state.dismissedToastKey === key) return;
+
+  if (
+    document.activeElement instanceof HTMLElement &&
+    !el.updateToast.contains(document.activeElement)
+  ) {
+    state.priorFocusEl = document.activeElement;
+  }
+
+  el.updateToastMessage.textContent = message;
+  el.btnToastWeekly.hidden = !showWeekly;
+  el.btnToastMonthly.hidden = !showMonthly;
+  state.activeToastKey = key;
+
+  el.updateToast.hidden = false;
+  el.updateToast.classList.add('is-open');
+  if ('showPopover' in el.updateToast) {
+    try {
+      if (!el.updateToast.matches(':popover-open')) {
+        el.updateToast.showPopover();
+      }
+    } catch {
+      // Usa classe .is-open como fallback
+    }
+  }
+
+  announceToast(message, showWeekly || showMonthly);
+}
+
+function markPeriodSeen(period) {
+  if ((period !== 'weekly' && period !== 'monthly') || !state.signId) return;
+  if (state.pendingSignatures[period]) {
+    saveSeenPeriod(state.signId, period, state.pendingSignatures[period]);
+    state.pendingSignatures[period] = null;
+  }
+  state.unreadPeriods.delete(period);
+  syncTabBadges();
+
+  if (el.updateToast && !el.updateToast.hidden) {
+    if (period === 'weekly') el.btnToastWeekly.hidden = true;
+    if (period === 'monthly') el.btnToastMonthly.hidden = true;
+    if (state.unreadPeriods.size === 0) {
+      hideUpdateToast({ markDismissed: true, restoreFocus: false });
+    }
+  }
+}
+
+async function checkWeeklyMonthlyUpdates(signId) {
+  const seq = ++state.updateCheckSeq;
+  state.unreadPeriods.clear();
+  state.pendingSignatures.weekly = null;
+  state.pendingSignatures.monthly = null;
+  syncTabBadges();
+
+  const [weeklyRes, monthlyRes] = await Promise.all([
+    fetchHoroscope(signId, 'weekly').catch(() => null),
+    fetchHoroscope(signId, 'monthly').catch(() => null),
+  ]);
+
+  if (seq !== state.updateCheckSeq || state.signId !== signId || el.viewMain.hidden) {
+    return;
+  }
+
+  const seen = getSeenPeriods(signId);
+  const results = { weekly: weeklyRes, monthly: monthlyRes };
+  const updated = [];
+  const keyParts = [];
+
+  for (const period of ['weekly', 'monthly']) {
+    const res = results[period];
+    if (!isValidForecastResult(res)) continue;
+    const sig = computeTextSignature(res.date, res.text);
+    if (!seen[period]) {
+      saveSeenPeriod(signId, period, sig);
+    } else if (seen[period] !== sig) {
+      updated.push(period);
+      keyParts.push(`${period}:${sig}`);
+      if (state.period === period) {
+        saveSeenPeriod(signId, period, sig);
+      } else {
+        state.unreadPeriods.add(period);
+        state.pendingSignatures[period] = sig;
+      }
+    }
+  }
+
+  syncTabBadges();
+
+  if (updated.length > 0) {
+    let message = 'Nova previsão disponível!';
+    if (updated.includes('weekly') && updated.includes('monthly')) {
+      message = 'Novas previsões para a semana e para o mês!';
+    } else if (updated.includes('weekly')) {
+      message = 'Nova previsão para a semana!';
+    } else if (updated.includes('monthly')) {
+      message = 'Nova previsão para o mês!';
+    }
+
+    showUpdateToast({
+      message,
+      showWeekly: state.unreadPeriods.has('weekly'),
+      showMonthly: state.unreadPeriods.has('monthly'),
+      key: `${signId}|${keyParts.join('|')}`,
+    });
+  }
+}
+
 function activateTab(period, { moveFocus = false, persist = true, reload = true } = {}) {
   const safePeriod = PERIODS.includes(period) ? period : 'daily';
   state.period = safePeriod;
@@ -316,62 +510,42 @@ function activateTab(period, { moveFocus = false, persist = true, reload = true 
     panel.hidden = !isMatch;
   }
 
+  markPeriodSeen(safePeriod);
+
   if (reload && state.signId) {
     loadActiveHoroscope(state.signId, safePeriod);
   }
 }
 
 function renderAstroData(data) {
-  el.astroCityLabel.textContent = `${data.city.name}, ${data.city.state}`;
-
   el.moonSvgSlot.innerHTML = renderMoonSvg(
     data.moon.phaseFraction,
     data.moon.illuminationPct,
     data.moon.namePt
   );
-  el.moonDetail.textContent = data.moon.detailPt;
-
-  if (
-    data.moon.namePt &&
-    data.moon.namePt.toLowerCase() !== data.moon.detailPt.toLowerCase()
-  ) {
-    el.moonPhaseName.textContent = data.moon.namePt;
-    el.moonPhaseName.hidden = false;
-  } else if (Number.isFinite(data.moon.ageDays)) {
-    el.moonPhaseName.textContent = `Dia ${Math.round(data.moon.ageDays)} do ciclo lunar`;
-    el.moonPhaseName.hidden = false;
-  } else {
-    el.moonPhaseName.textContent = '';
-    el.moonPhaseName.hidden = true;
-  }
-
+  el.moonPhaseName.textContent = data.moon.namePt;
   el.moonIllumination.textContent = `${Math.round(data.moon.illuminationPct)}% iluminada`;
 
   el.nextMoonBadge.innerHTML = renderPhaseBadgeSvg(data.nextMoonChange.phaseKey);
   el.nextMoonName.textContent = data.nextMoonChange.namePt;
-  el.nextMoonDatetime.textContent = `${data.nextMoonChange.datePt} · às ${data.nextMoonChange.timePt}`;
   el.nextMoonRelative.textContent = data.nextMoonChange.relativePt;
 
   el.sunSunrise.textContent = data.sun.sunrisePt;
   el.sunSunset.textContent = data.sun.sunsetPt;
-  el.sunDaylight.textContent = data.sun.daylightPt;
 }
 
-async function loadAstroSection(cityId) {
+async function loadAstroSection() {
   if (state.astroAbort) {
     state.astroAbort.abort();
   }
   const controller = new AbortController();
   state.astroAbort = controller;
 
-  const fallbackCity = getCityById(cityId);
-  el.astroCityLabel.textContent = `${fallbackCity.name}, ${fallbackCity.state}`;
-
   try {
-    const data = await loadMoonAndSun(fallbackCity.id, new Date(), {
+    const data = await loadMoonAndSun(new Date(), {
       signal: controller.signal,
     });
-    if (controller.signal.aborted || state.cityId !== fallbackCity.id) {
+    if (controller.signal.aborted) {
       return;
     }
     renderAstroData(data);
@@ -382,55 +556,8 @@ async function loadAstroSection(cityId) {
   }
 }
 
-function populateCityDialog() {
-  const fragment = document.createDocumentFragment();
-
-  for (const city of BRAZIL_CITIES) {
-    const li = document.createElement('li');
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'city-option';
-    button.dataset.cityId = city.id;
-    button.setAttribute('aria-pressed', city.id === state.cityId ? 'true' : 'false');
-
-    const nameSpan = document.createElement('span');
-    nameSpan.textContent = `${city.name}, ${city.state}`;
-
-    const checkSpan = document.createElement('span');
-    checkSpan.className = 'city-check';
-    checkSpan.setAttribute('aria-hidden', 'true');
-    checkSpan.textContent = city.id === state.cityId ? '✓' : '';
-
-    button.append(nameSpan, checkSpan);
-    li.append(button);
-    fragment.append(li);
-  }
-
-  el.cityList.replaceChildren(fragment);
-}
-
-function syncCityDialogSelection() {
-  const buttons = el.cityList.querySelectorAll('.city-option');
-  for (const btn of buttons) {
-    const isCurrent = btn.dataset.cityId === state.cityId;
-    btn.setAttribute('aria-pressed', isCurrent ? 'true' : 'false');
-    const check = btn.querySelector('.city-check');
-    if (check) {
-      check.textContent = isCurrent ? '✓' : '';
-    }
-  }
-}
-
-function openCityDialog() {
-  syncCityDialogSelection();
-  el.cityDialog.showModal();
-  const activeBtn = el.cityList.querySelector('.city-option[aria-pressed="true"]');
-  if (activeBtn) {
-    activeBtn.scrollIntoView({ block: 'nearest' });
-  }
-}
-
 function showPickerView({ moveFocus = false } = {}) {
+  hideUpdateToast({ markDismissed: false, restoreFocus: false });
   el.viewMain.hidden = true;
   el.viewPicker.hidden = false;
   if (moveFocus) {
@@ -462,7 +589,8 @@ function showMainView(signId, { moveFocus = false } = {}) {
 
   renderDailyExtras(sign.id, state.lastDateISO);
   activateTab(state.period, { moveFocus: false, persist: false, reload: true });
-  loadAstroSection(state.cityId);
+  loadAstroSection();
+  checkWeeklyMonthlyUpdates(sign.id);
 
   if (moveFocus) {
     el.activeSignName.focus();
@@ -565,50 +693,32 @@ function bindEvents() {
     }
   });
 
-  el.btnChangeCity.addEventListener('click', openCityDialog);
-
-  el.btnCloseCity.addEventListener('click', () => {
-    el.cityDialog.close();
+  el.btnToastWeekly.addEventListener('click', () => {
+    hideUpdateToast({ markDismissed: false, restoreFocus: false });
+    activateTab('weekly', { moveFocus: true, persist: true, reload: true });
   });
 
-  el.cityList.addEventListener('click', (event) => {
-    const target = event.target instanceof Element ? event.target : event.target?.parentElement;
-    const option = target ? target.closest('.city-option') : null;
-    if (!option) return;
-    const nextCityId = getCityById(option.dataset.cityId).id;
-    state.cityId = nextCityId;
-    saveCityId(nextCityId);
-    el.cityDialog.close();
-    loadAstroSection(nextCityId);
+  el.btnToastMonthly.addEventListener('click', () => {
+    hideUpdateToast({ markDismissed: false, restoreFocus: false });
+    activateTab('monthly', { moveFocus: true, persist: true, reload: true });
   });
 
-  el.cityDialog.addEventListener('close', () => {
-    el.cityDialog.returnValue = '';
-  });
-
-  // Coordinate-based backdrop click fallback only when native closedBy is unsupported
-  if (!('closedBy' in HTMLDialogElement.prototype)) {
-    let pointerDownOutside = false;
-
-    const isPointOutsideDialog = (event) => {
-      const rect = el.cityDialog.getBoundingClientRect();
-      return (
-        event.clientX < rect.left ||
-        event.clientX > rect.right ||
-        event.clientY < rect.top ||
-        event.clientY > rect.bottom
-      );
-    };
-
-    el.cityDialog.addEventListener('pointerdown', (event) => {
-      pointerDownOutside = event.target === el.cityDialog && isPointOutsideDialog(event);
-    });
-
-    el.cityDialog.addEventListener('pointerup', (event) => {
-      if (pointerDownOutside && event.target === el.cityDialog && isPointOutsideDialog(event)) {
-        el.cityDialog.close();
+  if (el.updateToast && 'showPopover' in el.updateToast) {
+    el.updateToast.addEventListener('toggle', (event) => {
+      if (event.newState === 'closed') {
+        const opts = state.pendingCloseOpts || {
+          markDismissed: true,
+          restoreFocus:
+            document.activeElement instanceof Node &&
+            el.updateToast.contains(document.activeElement),
+        };
+        state.pendingCloseOpts = null;
+        finalizeToastClose(opts);
       }
-      pointerDownOutside = false;
+    });
+  } else if (el.btnToastClose) {
+    el.btnToastClose.addEventListener('click', () => {
+      hideUpdateToast({ markDismissed: true, restoreFocus: true });
     });
   }
 
@@ -622,7 +732,8 @@ function bindEvents() {
       if (state.signId && !el.viewMain.hidden) {
         renderDailyExtras(state.signId, todayISO);
         loadActiveHoroscope(state.signId, state.period);
-        loadAstroSection(state.cityId);
+        loadAstroSection();
+        checkWeeklyMonthlyUpdates(state.signId);
       }
     }
   });
@@ -645,7 +756,6 @@ function registerServiceWorker() {
 function init() {
   state.fontLevel = getFontLevel();
   state.period = getSavedPeriod();
-  state.cityId = getCityById(getSavedCityId()).id;
   const savedSign = getSignById(getSavedSign());
   state.signId = savedSign ? savedSign.id : null;
 
@@ -653,7 +763,6 @@ function init() {
   syncColorSchemeUi();
   renderHeaderDate();
   populateSignGrid();
-  populateCityDialog();
   bindEvents();
   registerServiceWorker();
 

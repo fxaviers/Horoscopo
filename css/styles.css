@@ -192,66 +192,74 @@ button {
 }
 
 .header-top {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.875rem 1rem;
-}
-
-.greeting-block {
-  min-inline-size: 0;
   display: grid;
-  gap: 0.2rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  column-gap: 0.75rem;
+  row-gap: 0.3rem;
 }
 
 .greeting-text {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: end;
+  padding-block-start: 0.25rem;
   font-size: calc(1.35rem * var(--font-scale, 1));
   font-weight: 700;
   color: var(--accent);
-  line-height: 1.25;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .today-date {
+  grid-column: 1 / -1;
+  grid-row: 2;
   font-size: calc(0.95rem * var(--font-scale, 1));
   color: var(--text-muted);
   line-height: 1.35;
 }
 
 .header-controls {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  align-self: start;
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
   max-inline-size: 100%;
 }
 
 .font-controls {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: 0.3rem;
 }
 
 .ctrl-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  min-inline-size: 3rem;
-  min-block-size: 3rem;
-  padding: 0.5rem 0.85rem;
-  border: 1px solid var(--border-strong);
+  gap: 0.3rem;
+  min-inline-size: 2.35rem;
+  min-block-size: 2.35rem;
+  padding: 0.25rem 0.58rem;
+  border: 1px solid var(--border);
   border-radius: 999px;
-  background-color: var(--surface);
-  color: var(--text);
-  font-size: calc(0.95rem * var(--font-scale, 1));
+  background-color: var(--surface-soft);
+  color: var(--text-muted);
+  font-size: 0.85rem;
   font-weight: 700;
-  line-height: 1.15;
-  transition: background-color 140ms ease, border-color 140ms ease;
+  line-height: 1.1;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
 }
 
 .ctrl-btn:hover:not(:disabled) {
   background-color: var(--surface-hover);
+  border-color: var(--border-strong);
+  color: var(--text);
 }
 
 .ctrl-btn:disabled {
@@ -260,8 +268,8 @@ button {
 }
 
 .ctrl-icon {
-  inline-size: 1.15em;
-  block-size: 1.15em;
+  inline-size: 1.1em;
+  block-size: 1.1em;
   flex-shrink: 0;
 }
 
@@ -498,7 +506,7 @@ button {
   flex: 1 1 0;
   min-inline-size: max-content;
   min-block-size: 3rem;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 0.75rem;
   border: 0;
   border-radius: 0.75rem 0.75rem 0 0;
   background-color: transparent;
@@ -507,7 +515,22 @@ button {
   font-size: calc(1.05rem * var(--font-scale, 1));
   line-height: 1.2;
   text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
   transition: color 140ms ease, background-color 140ms ease;
+}
+
+.tab-new-badge {
+  display: inline-block;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.1;
 }
 
 .tab-btn:hover {
@@ -575,7 +598,7 @@ button {
   line-height: 1.5;
 }
 
-/* Daily Extras (Cor, Número, Energia) */
+/* Daily Extras (Cor e Número em 2 colunas visuais + Energia abaixo) */
 .extras-section {
   display: grid;
   gap: 0.875rem;
@@ -584,19 +607,56 @@ button {
 
 .extras-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
 }
 
 .extra-card {
-  padding: 1rem 1.125rem;
+  padding: 1.125rem 0.875rem;
   border: 1px solid var(--border);
   border-radius: 1.125rem;
   background-color: var(--surface);
   box-shadow: var(--card-shadow);
   display: grid;
-  gap: 0.45rem;
+  gap: 0.55rem;
   align-content: center;
+  min-inline-size: 0;
+}
+
+.extra-card-color,
+.extra-card-number {
+  justify-items: center;
+  text-align: center;
+}
+
+.extra-card-energy {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem 1.125rem;
+}
+
+.extra-energy-icon {
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  border-radius: 0.75rem;
+  background-color: var(--accent-soft);
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.extra-energy-icon svg {
+  inline-size: 1.35rem;
+  block-size: 1.35rem;
+}
+
+.extra-energy-info {
+  display: grid;
+  gap: 0.15rem;
   min-inline-size: 0;
 }
 
@@ -607,36 +667,32 @@ button {
 }
 
 .extra-value {
-  font-size: calc(1.15rem * var(--font-scale, 1));
+  font-size: calc(1.125rem * var(--font-scale, 1));
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.25;
 }
 
 .extra-number {
-  font-size: calc(1.45rem * var(--font-scale, 1));
+  font-size: calc(2.75rem * var(--font-scale, 1));
+  font-weight: 800;
+  line-height: 1;
   color: var(--accent);
   font-variant-numeric: tabular-nums;
 }
 
-.color-value {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  min-inline-size: 0;
-}
-
 .color-swatch {
   display: inline-block;
-  inline-size: 1.75rem;
-  block-size: 1.75rem;
+  inline-size: 3.5rem;
+  block-size: 3.5rem;
   border-radius: 50%;
   flex-shrink: 0;
-  border: 2px solid var(--swatch-border, var(--border-strong));
+  border: 3px solid var(--swatch-border, var(--border-strong));
   background-color: var(--swatch-bg, var(--accent));
+  box-shadow: 0 0 0 3px var(--surface), 0 0 0 4px var(--border);
   forced-color-adjust: none;
 }
 
-/* Moon and Sun Section */
+/* Moon and Sun Section (São Joaquim da Barra, SP) */
 .astro-section {
   display: grid;
   gap: 0.875rem;
@@ -646,233 +702,234 @@ button {
 .astro-header {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 0.75rem 1rem;
-}
-
-.astro-title-group {
-  display: grid;
-  gap: 0.15rem;
-  min-inline-size: 0;
+  gap: 0.25rem 0.75rem;
 }
 
 .astro-city-label {
-  font-size: calc(0.975rem * var(--font-scale, 1));
+  font-size: calc(0.95rem * var(--font-scale, 1));
   color: var(--text-muted);
   font-weight: 600;
 }
 
-.astro-grid {
+.moon-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
 }
 
 .astro-card {
-  padding: 1.125rem;
+  padding: 1.125rem 0.875rem;
   border: 1px solid var(--border);
   border-radius: 1.125rem;
   background-color: var(--surface);
   box-shadow: var(--card-shadow);
   display: grid;
-  gap: 0.75rem;
+  gap: 0.65rem;
   align-content: start;
   min-inline-size: 0;
 }
 
+.moon-today-card,
+.next-moon-card {
+  justify-items: center;
+  text-align: center;
+  gap: 0.5rem;
+}
+
 .astro-card-title {
-  font-size: calc(1rem * var(--font-scale, 1));
+  font-size: calc(0.95rem * var(--font-scale, 1));
   font-weight: 700;
   color: var(--text-muted);
 }
 
-.moon-today-body,
-.next-moon-body {
-  display: flex;
-  align-items: center;
-  gap: 0.875rem;
-  min-inline-size: 0;
-}
-
-.moon-svg-slot {
-  inline-size: 4.5rem;
-  block-size: 4.5rem;
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.moon-svg {
-  inline-size: 100%;
-  block-size: 100%;
-}
-
+.moon-svg-slot,
 .next-moon-badge {
-  inline-size: 2.75rem;
-  block-size: 2.75rem;
+  inline-size: 4.75rem;
+  block-size: 4.75rem;
   flex-shrink: 0;
-  color: var(--accent);
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
+.moon-svg,
 .phase-badge-svg {
   inline-size: 100%;
   block-size: 100%;
 }
 
-.moon-today-info,
-.next-moon-info {
-  display: grid;
-  gap: 0.2rem;
-  min-inline-size: 0;
+.astro-primary {
+  font-size: calc(1.08rem * var(--font-scale, 1));
+  font-weight: 700;
+  line-height: 1.25;
 }
 
-.astro-primary {
-  font-size: calc(1.125rem * var(--font-scale, 1));
+.astro-meta {
+  font-size: calc(0.92rem * var(--font-scale, 1));
+  color: var(--accent);
   font-weight: 700;
   line-height: 1.3;
 }
 
-.astro-secondary {
-  font-size: calc(0.975rem * var(--font-scale, 1));
-  color: var(--text);
-  line-height: 1.35;
+.sun-card {
+  gap: 0.85rem;
+  padding: 1.125rem;
 }
 
-.astro-meta {
-  font-size: calc(0.925rem * var(--font-scale, 1));
-  color: var(--accent);
-  font-weight: 700;
-  line-height: 1.35;
+.sun-card .astro-card-title {
+  text-align: center;
 }
 
-.sun-times-list {
+.sun-grid {
   display: grid;
-  gap: 0.55rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
 }
 
-.sun-time-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.25rem 0.75rem;
-  padding-block-end: 0.45rem;
-  border-block-end: 1px solid var(--border);
+.sun-item {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  min-inline-size: 0;
 }
 
-.sun-time-row:last-child {
-  padding-block-end: 0;
-  border-block-end: 0;
+.sun-item + .sun-item {
+  border-inline-start: 1px solid var(--border);
 }
 
-.sun-time-row dt {
-  font-size: calc(0.95rem * var(--font-scale, 1));
+.sun-icon {
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sun-icon svg {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.sun-label {
+  font-size: calc(0.9rem * var(--font-scale, 1));
   color: var(--text-muted);
+  font-weight: 600;
 }
 
-.sun-time-row dd {
+.sun-time {
+  margin: 0;
+  font-size: calc(1.5rem * var(--font-scale, 1));
+  font-weight: 800;
+  line-height: 1.15;
   font-variant-numeric: tabular-nums;
+  color: var(--text);
 }
 
-/* Native City Selection Dialog (NEVER set display on dialog without [open]) */
-.city-dialog {
-  padding: 0;
-  border: 1px solid var(--border-strong);
-  border-radius: 1.25rem;
+/* Persistent Update Toast (popover="manual" + fallback) */
+.visually-hidden:where(:not(:focus-within, :active)) {
+  position: absolute !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}
+
+.toast-region {
+  position: fixed;
+  inset: auto 0 0 0;
+  pointer-events: none;
+  z-index: 90;
+}
+
+.update-toast {
+  position: fixed;
+  inset: auto 0.75rem max(1rem, env(safe-area-inset-bottom, 0px)) 0.75rem;
+  margin: 0 auto;
+  inline-size: min(30rem, calc(100vw - 1.5rem));
+  max-inline-size: calc(100vw - 1.5rem);
+  padding: 1rem 1.125rem;
+  border: 2px solid var(--accent);
+  border-radius: 1.125rem;
   background-color: var(--surface);
   color: var(--text);
-  inline-size: min(34rem, calc(100vw - 1.5rem));
-  max-inline-size: calc(100vw - 1.5rem);
-  max-block-size: calc(100dvh - 2rem);
-  margin: auto;
-  box-shadow: 0 18px 48px rgb(0 0 0 / 0.35);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.28);
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(0.75rem);
+  transition: opacity 180ms ease, transform 180ms ease, display 180ms ease, overlay 180ms ease;
+  transition-behavior: allow-discrete;
 }
 
-.city-dialog:modal {
-  overscroll-behavior: contain;
+@supports not selector(:popover-open) {
+  .update-toast:not(.is-open) {
+    display: none;
+  }
 }
 
-.city-dialog::backdrop {
-  overflow: hidden;
-  overscroll-behavior: contain;
-  background-color: rgb(12 16 26 / 0.62);
+.update-toast:popover-open,
+.update-toast.is-open {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+
+  @starting-style {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
 }
 
-.city-dialog[open] {
-  display: flex;
-  flex-direction: column;
-}
-
-.city-dialog-surface {
-  display: flex;
-  flex-direction: column;
-  gap: 0.875rem;
-  padding: 1.25rem;
-  min-block-size: 0;
-  max-block-size: calc(100dvh - 2rem);
-}
-
-.city-dialog-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  flex-shrink: 0;
-}
-
-.city-dialog-hint {
-  font-size: calc(0.95rem * var(--font-scale, 1));
-  color: var(--text-muted);
-  flex-shrink: 0;
-}
-
-.city-list {
+.update-toast-content {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.5rem;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding-inline-end: 0.25rem;
-  min-block-size: 0;
-}
-
-.city-option {
-  inline-size: 100%;
-  min-block-size: 3.25rem;
-  padding: 0.65rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: 0.875rem;
-  background-color: var(--bg);
-  color: var(--text);
-  font-size: calc(1rem * var(--font-scale, 1));
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   gap: 0.75rem;
-  text-align: start;
 }
 
-.city-option:hover {
-  background-color: var(--surface-hover);
-  border-color: var(--accent);
+.update-toast-message {
+  font-size: calc(1.02rem * var(--font-scale, 1));
+  font-weight: 700;
+  line-height: 1.35;
 }
 
-.city-option[aria-pressed="true"] {
+.update-toast-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.toast-action-btn,
+.toast-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 2.75rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 0.75rem;
+  font-size: calc(0.95rem * var(--font-scale, 1));
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.toast-action-btn {
   border: 2px solid var(--accent);
-  background-color: var(--accent-soft);
-  font-weight: 700;
+  background-color: var(--accent);
+  color: var(--accent-contrast);
 }
 
-.city-check {
-  color: var(--accent);
-  font-weight: 700;
-  flex-shrink: 0;
+.toast-close-btn {
+  border: 1px solid var(--border-strong);
+  background-color: var(--surface-soft);
+  color: var(--text);
 }
 
 /* Responsive Desktop Breakpoints */
@@ -880,23 +937,11 @@ button {
   .sign-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-
-  .extras-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .city-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (min-width: 48rem) {
   .app-shell {
     padding-block-start: 1.5rem;
-  }
-
-  .astro-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -922,17 +967,23 @@ button {
   .tab-panel-card,
   .extra-card,
   .astro-card,
-  .city-dialog,
-  .city-option,
+  .update-toast,
+  .toast-action-btn,
+  .toast-close-btn,
   .offline-notice {
     border-color: CanvasText;
+  }
+
+  .tab-new-badge {
+    background-color: Highlight;
+    color: HighlightText;
+    border: 1px solid Highlight;
   }
 
   .tab-btn[aria-selected="true"]::after {
     border-block-end-color: Highlight;
   }
 
-  .city-option[aria-pressed="true"],
   .sign-card:hover {
     border-color: Highlight;
   }

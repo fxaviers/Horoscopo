@@ -9,8 +9,8 @@ const KEYS = {
   sign: `${PREFIX}sign`,
   period: `${PREFIX}period`,
   fontLevel: `${PREFIX}font_level`,
-  cityId: `${PREFIX}city_id`,
   colorScheme: `${PREFIX}color_scheme`,
+  seenPeriods: `${PREFIX}seen_periods`,
 };
 
 const VALID_PERIODS = new Set(['daily', 'weekly', 'monthly']);
@@ -96,16 +96,46 @@ export function saveFontLevel(level) {
   }
 }
 
-export function getSavedCityId() {
-  const val = readRaw(KEYS.cityId);
-  return typeof val === 'string' && val.trim() ? val.trim() : 'sao-paulo';
+export function getSeenPeriods(signId) {
+  if (!signId) return { weekly: null, monthly: null };
+  const raw = readRaw(KEYS.seenPeriods);
+  if (!raw) return { weekly: null, monthly: null };
+  try {
+    const map = JSON.parse(raw);
+    const entry = map && typeof map === 'object' ? map[signId] : null;
+    return {
+      weekly: typeof entry?.weekly === 'string' ? entry.weekly : null,
+      monthly: typeof entry?.monthly === 'string' ? entry.monthly : null,
+    };
+  } catch {
+    return { weekly: null, monthly: null };
+  }
 }
 
-export function saveCityId(cityId) {
-  if (typeof cityId === 'string' && cityId.trim()) {
-    writeRaw(KEYS.cityId, cityId.trim());
-  } else {
-    removeRaw(KEYS.cityId);
+export function saveSeenPeriod(signId, period, signature) {
+  if (!signId || (period !== 'weekly' && period !== 'monthly') || typeof signature !== 'string' || !signature) {
+    return;
+  }
+  let map = {};
+  try {
+    const existing = readRaw(KEYS.seenPeriods);
+    if (existing) {
+      const parsed = JSON.parse(existing);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        map = parsed;
+      }
+    }
+  } catch {
+    map = {};
+  }
+
+  const prev = map[signId] && typeof map[signId] === 'object' ? map[signId] : {};
+  map[signId] = { ...prev, [period]: signature };
+
+  try {
+    writeRaw(KEYS.seenPeriods, JSON.stringify(map));
+  } catch {
+    // Ignora erro de cota
   }
 }
 
