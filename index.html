@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <script>
+    try {
+      var savedScheme = localStorage.getItem('horoscopo_v1_color_scheme');
+      document.querySelector('meta[name="color-scheme"]').content =
+        (savedScheme === 'light' || savedScheme === 'dark') ? savedScheme : 'light dark';
+    } catch (e) {}
+  </script>
+  <meta name="theme-color" content="#FAF6EE">
+  <meta name="description" content="Previsão diária, semanal e mensal em português, com fase da Lua e horários do Sol.">
+  <title>Horóscopo do Dia</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Ir para o conteúdo principal</a>
+
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="header-top">
+        <div class="greeting-block">
+          <p id="greeting-text" class="greeting-text">Bom dia!</p>
+          <p id="today-date" class="today-date"></p>
+        </div>
+
+        <div class="header-controls" role="group" aria-label="Controles de leitura e tema">
+          <div class="font-controls" role="group" aria-label="Tamanho da letra">
+            <button
+              type="button"
+              id="btn-font-down"
+              class="ctrl-btn font-btn"
+              aria-label="Diminuir tamanho da letra"
+              title="Diminuir letra"
+            >
+              A−
+            </button>
+            <button
+              type="button"
+              id="btn-font-up"
+              class="ctrl-btn font-btn"
+              aria-label="Aumentar tamanho da letra"
+              title="Aumentar letra"
+            >
+              A+
+            </button>
+          </div>
+
+          <button
+            type="button"
+            id="btn-theme"
+            class="ctrl-btn theme-btn"
+            aria-label="Alternar entre modo claro e escuro"
+          >
+            <svg id="theme-icon-moon" class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <svg id="theme-icon-sun" class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
+              <circle cx="12" cy="12" r="4"/>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+            </svg>
+            <span id="theme-label">Escuro</span>
+          </button>
+
+          <button
+            type="button"
+            id="btn-install"
+            class="ctrl-btn install-btn"
+            hidden
+          >
+            <svg class="ctrl-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+            </svg>
+            <span>Instalar</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content" class="app-main" tabindex="-1">
+      <!-- Vista 1: Seletor de signo -->
+      <section id="view-picker" class="view-picker" aria-labelledby="picker-title">
+        <div class="picker-intro">
+          <h1 id="picker-title" class="page-title">Escolha seu signo</h1>
+          <p class="picker-subtitle">Toque no seu signo para acompanhar a previsão de cada dia.</p>
+        </div>
+
+        <ul id="sign-grid" class="sign-grid" aria-label="Lista dos 12 signos"></ul>
+
+        <section class="birth-helper" aria-labelledby="birth-helper-title">
+          <h2 id="birth-helper-title" class="section-heading">Não sabe seu signo?</h2>
+          <p class="helper-hint">Informe o dia e o mês do seu nascimento para descobrir:</p>
+
+          <div class="birth-fields">
+            <div class="field-group">
+              <label for="birth-day">Dia</label>
+              <select id="birth-day" class="select-input">
+                <option value="">Escolha o dia</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label for="birth-month">Mês</label>
+              <select id="birth-month" class="select-input">
+                <option value="">Escolha o mês</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="birth-result" class="birth-result" aria-live="polite" hidden>
+            <div class="birth-result-info">
+              <span id="birth-result-icon" class="birth-result-icon" aria-hidden="true"></span>
+              <p id="birth-result-text" class="birth-result-text"></p>
+            </div>
+            <button type="button" id="btn-confirm-birth-sign" class="primary-btn" hidden>
+              Ver meu horóscopo
+            </button>
+          </div>
+        </section>
+      </section>
+
+      <!-- Vista 2: Tela principal -->
+      <section id="view-main" class="view-main" aria-labelledby="active-sign-name" hidden>
+        <div class="sign-banner">
+          <div class="sign-identity">
+            <span id="active-sign-icon" class="active-sign-icon" aria-hidden="true"></span>
+            <div class="sign-titles">
+              <h1 id="active-sign-name" class="active-sign-name" tabindex="-1">Áries</h1>
+              <p id="active-sign-range" class="active-sign-range"></p>
+            </div>
+          </div>
+
+          <button type="button" id="btn-change-sign" class="secondary-btn">
+            Trocar signo
+          </button>
+        </div>
+
+        <!-- Abas de período -->
+        <section class="forecast-section" aria-label="Previsão astrológica">
+          <div class="tabs-bar" role="tablist" aria-label="Período da previsão">
+            <button
+              type="button"
+              id="tab-daily"
+              class="tab-btn"
+              role="tab"
+              aria-selected="true"
+              aria-controls="panel-daily"
+              tabindex="0"
+              data-period="daily"
+            >Hoje</button>
+            <button
+              type="button"
+              id="tab-weekly"
+              class="tab-btn"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-weekly"
+              tabindex="-1"
+              data-period="weekly"
+            >Semana</button>
+            <button
+              type="button"
+              id="tab-monthly"
+              class="tab-btn"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-monthly"
+              tabindex="-1"
+              data-period="monthly"
+            >Mês</button>
+          </div>
+
+          <div
+            id="panel-daily"
+            class="tab-panel"
+            role="tabpanel"
+            aria-labelledby="tab-daily"
+            tabindex="0"
+          >
+            <div class="tab-panel-card">
+              <div class="forecast-body" data-panel-body="daily">
+                <p class="loading-text">Carregando previsão...</p>
+              </div>
+              <p class="offline-notice" data-panel-notice="daily" aria-live="polite" hidden></p>
+            </div>
+          </div>
+
+          <div
+            id="panel-weekly"
+            class="tab-panel"
+            role="tabpanel"
+            aria-labelledby="tab-weekly"
+            tabindex="0"
+            hidden
+          >
+            <div class="tab-panel-card">
+              <div class="forecast-body" data-panel-body="weekly">
+                <p class="loading-text">Carregando previsão...</p>
+              </div>
+              <p class="offline-notice" data-panel-notice="weekly" aria-live="polite" hidden></p>
+            </div>
+          </div>
+
+          <div
+            id="panel-monthly"
+            class="tab-panel"
+            role="tabpanel"
+            aria-labelledby="tab-monthly"
+            tabindex="0"
+            hidden
+          >
+            <div class="tab-panel-card">
+              <div class="forecast-body" data-panel-body="monthly">
+                <p class="loading-text">Carregando previsão...</p>
+              </div>
+              <p class="offline-notice" data-panel-notice="monthly" aria-live="polite" hidden></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3 Cartões de destaques de hoje -->
+        <section class="extras-section" aria-labelledby="extras-title">
+          <h2 id="extras-title" class="section-heading">Destaques de hoje</h2>
+          <div class="extras-grid">
+            <article class="extra-card">
+              <span class="extra-label">Cor do dia</span>
+              <div class="color-value">
+                <span id="extra-color-swatch" class="color-swatch" aria-hidden="true"></span>
+                <span id="extra-color-name" class="extra-value">—</span>
+              </div>
+            </article>
+
+            <article class="extra-card">
+              <span class="extra-label">Número da sorte</span>
+              <span id="extra-number" class="extra-value extra-number">—</span>
+            </article>
+
+            <article class="extra-card">
+              <span class="extra-label">Energia do dia</span>
+              <span id="extra-energy" class="extra-value">—</span>
+            </article>
+          </div>
+        </section>
+
+        <!-- Seção Lua e Sol de Hoje -->
+        <section class="astro-section" aria-labelledby="astro-title">
+          <div class="astro-header">
+            <div class="astro-title-group">
+              <h2 id="astro-title" class="section-heading">Lua e Sol de Hoje</h2>
+              <p id="astro-city-label" class="astro-city-label">São Paulo, SP</p>
+            </div>
+
+            <button type="button" id="btn-change-city" class="secondary-btn">
+              Trocar cidade
+            </button>
+          </div>
+
+          <div class="astro-grid">
+            <article class="astro-card moon-today-card">
+              <h3 class="astro-card-title">Lua de hoje</h3>
+              <div class="moon-today-body">
+                <div id="moon-svg-slot" class="moon-svg-slot"></div>
+                <div class="moon-today-info">
+                  <p id="moon-detail" class="astro-primary">—</p>
+                  <p id="moon-phase-name" class="astro-secondary">—</p>
+                  <p id="moon-illumination" class="astro-meta">—</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="astro-card next-moon-card">
+              <h3 class="astro-card-title">Próxima mudança da lua</h3>
+              <div class="next-moon-body">
+                <span id="next-moon-badge" class="next-moon-badge" aria-hidden="true"></span>
+                <div class="next-moon-info">
+                  <p id="next-moon-name" class="astro-primary">—</p>
+                  <p id="next-moon-datetime" class="astro-secondary">—</p>
+                  <p id="next-moon-relative" class="astro-meta">—</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="astro-card sun-card">
+              <h3 class="astro-card-title">Nascer e pôr do sol</h3>
+              <dl class="sun-times-list">
+                <div class="sun-time-row">
+                  <dt>Nascer do sol</dt>
+                  <dd id="sun-sunrise" class="astro-primary">—</dd>
+                </div>
+                <div class="sun-time-row">
+                  <dt>Pôr do sol</dt>
+                  <dd id="sun-sunset" class="astro-primary">—</dd>
+                </div>
+                <div class="sun-time-row">
+                  <dt>Duração do dia</dt>
+                  <dd id="sun-daylight" class="astro-secondary">—</dd>
+                </div>
+              </dl>
+            </article>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <!-- Native modal dialog para escolher cidade -->
+  <dialog id="city-dialog" class="city-dialog" closedby="any" aria-labelledby="city-dialog-title">
+    <div class="city-dialog-surface">
+      <div class="city-dialog-header">
+        <h2 id="city-dialog-title" class="section-heading">Escolha sua cidade</h2>
+        <button type="button" id="btn-close-city" class="ctrl-btn close-dialog-btn">
+          Fechar
+        </button>
+      </div>
+      <p class="city-dialog-hint">Os horários do Sol e da Lua usam a cidade selecionada.</p>
+      <ul id="city-list" class="city-list"></ul>
+    </div>
+  </dialog>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
