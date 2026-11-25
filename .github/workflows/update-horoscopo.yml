@@ -1,0 +1,59 @@
+name: Atualizar Horóscopo do Dia
+
+on:
+  schedule:
+    - cron: '15 6 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Forçar atualização e tradução de todas as previsões'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-horoscopo
+  cancel-in-progress: false
+
+jobs:
+  update-horoscopo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Executar pipeline de coleta e tradução (pt-BR)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          MYMEMORY_EMAIL: ${{ secrets.MYMEMORY_EMAIL }}
+          FORCE_UPDATE: ${{ inputs.force }}
+        run: |
+          if [ "${FORCE_UPDATE}" = "true" ]; then
+            node horoscopo/scripts/update-horoscopo.mjs --force
+          else
+            node horoscopo/scripts/update-horoscopo.mjs
+          fi
+
+      - name: Commit e push se horoscopo.json mudou
+        env:
+          TARGET_BRANCH: ${{ github.ref_name }}
+        run: |
+          if [ -n "$(git status --porcelain -- horoscopo/data/horoscopo.json)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add horoscopo/data/horoscopo.json
+            git commit -m "chore(horoscopo): atualizar previsões em pt-BR"
+            git pull --rebase origin "${TARGET_BRANCH}"
+            git push origin "HEAD:${TARGET_BRANCH}"
+          else
+            echo "Nenhuma alteração em horoscopo/data/horoscopo.json."
+          fi
