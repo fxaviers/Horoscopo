@@ -91,38 +91,9 @@
           <p class="picker-subtitle">Toque no seu signo para acompanhar a previsão de cada dia.</p>
         </div>
 
+        <p id="protocol-notice" class="offline-notice" hidden></p>
+
         <ul id="sign-grid" class="sign-grid" aria-label="Lista dos 12 signos"></ul>
-
-        <section class="birth-helper" aria-labelledby="birth-helper-title">
-          <h2 id="birth-helper-title" class="section-heading">Não sabe seu signo?</h2>
-          <p class="helper-hint">Informe o dia e o mês do seu nascimento para descobrir:</p>
-
-          <div class="birth-fields">
-            <div class="field-group">
-              <label for="birth-day">Dia</label>
-              <select id="birth-day" class="select-input">
-                <option value="">Escolha o dia</option>
-              </select>
-            </div>
-
-            <div class="field-group">
-              <label for="birth-month">Mês</label>
-              <select id="birth-month" class="select-input">
-                <option value="">Escolha o mês</option>
-              </select>
-            </div>
-          </div>
-
-          <div id="birth-result" class="birth-result" aria-live="polite" hidden>
-            <div class="birth-result-info">
-              <span id="birth-result-icon" class="birth-result-icon" aria-hidden="true"></span>
-              <p id="birth-result-text" class="birth-result-text"></p>
-            </div>
-            <button type="button" id="btn-confirm-birth-sign" class="primary-btn" hidden>
-              Ver meu horóscopo
-            </button>
-          </div>
-        </section>
       </section>
 
       <!-- Vista 2: Tela principal -->
@@ -323,6 +294,15 @@
     </div>
   </dialog>
 
+  <script>
+    if (window.location.protocol === 'file:') {
+      var notice = document.getElementById('protocol-notice');
+      if (notice) {
+        notice.textContent = 'Este aplicativo precisa ser aberto por um endereço web (como GitHub Pages ou servidor local). Abrir o arquivo HTML direto da pasta impede o funcionamento dos botões no navegador.';
+        notice.hidden = false;
+      }
+    }
+  </script>
   <script type="module" src="./js/app.js"></script>
 </body>
 </html>

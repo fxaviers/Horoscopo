@@ -19,8 +19,6 @@ export const SIGNS = [
   { id: 'pisces', name: 'Peixes', range: '19 fev – 20 mar', element: 'Água', start: [2, 19], end: [3, 20] },
 ];
 
-const DAYS_IN_MONTH = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
 const ABBREVIATIONS = new Set([
   'sr', 'sra', 'srta', 'dr', 'dra', 'prof', 'profa', 'etc', 'ex', 'obs',
   'aprox', 'pag', 'pág', 'vol', 'cap', 'art', 'tel', 'mr', 'mrs', 'ms',
@@ -35,32 +33,6 @@ export function getSignById(id) {
   if (typeof id !== 'string') return null;
   const normalized = id.trim().toLowerCase();
   return SIGNS.find((sign) => sign.id === normalized) || null;
-}
-
-/**
- * Descobre o signo pela data de nascimento (dia e mes), validando datas invalidas.
- * Aceita 29 de fevereiro (Peixes) e trata Capricórnio (22/12 a 19/01) corretamente.
- * @param {number} day
- * @param {number} month
- */
-export function getSignByBirthDate(day, month) {
-  const d = Number(day);
-  const m = Number(month);
-  if (!Number.isInteger(d) || !Number.isInteger(m)) return null;
-  if (m < 1 || m > 12) return null;
-  if (d < 1 || d > DAYS_IN_MONTH[m - 1]) return null;
-
-  const target = m * 100 + d;
-  for (const sign of SIGNS) {
-    const startVal = sign.start[0] * 100 + sign.start[1];
-    const endVal = sign.end[0] * 100 + sign.end[1];
-    if (startVal <= endVal) {
-      if (target >= startVal && target <= endVal) return sign;
-    } else if (target >= startVal || target <= endVal) {
-      return sign;
-    }
-  }
-  return null;
 }
 
 /**

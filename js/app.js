@@ -1,7 +1,6 @@
 import {
   SIGNS,
   getSignById,
-  getSignByBirthDate,
   formatHoroscopeParagraphs,
 } from './zodiac.js';
 import { getDailyExtras } from './daily-extras.js';
@@ -35,20 +34,6 @@ import {
 
 const FONT_SCALES = [1, 1.12, 1.26, 1.4];
 const PERIODS = ['daily', 'weekly', 'monthly'];
-const MONTH_NAMES = [
-  'Janeiro',
-  'Fevereiro',
-  'Março',
-  'Abril',
-  'Maio',
-  'Junho',
-  'Julho',
-  'Agosto',
-  'Setembro',
-  'Outubro',
-  'Novembro',
-  'Dezembro',
-];
 
 const colorSchemeMeta = document.querySelector('meta[name="color-scheme"]');
 const themeColorMeta = document.querySelector('meta[name="theme-color"]');
@@ -67,12 +52,6 @@ const el = {
 
   viewPicker: document.getElementById('view-picker'),
   signGrid: document.getElementById('sign-grid'),
-  birthDay: document.getElementById('birth-day'),
-  birthMonth: document.getElementById('birth-month'),
-  birthResult: document.getElementById('birth-result'),
-  birthResultIcon: document.getElementById('birth-result-icon'),
-  birthResultText: document.getElementById('birth-result-text'),
-  btnConfirmBirthSign: document.getElementById('btn-confirm-birth-sign'),
 
   viewMain: document.getElementById('view-main'),
   activeSignIcon: document.getElementById('active-sign-icon'),
@@ -154,6 +133,11 @@ function syncColorSchemeUi() {
   if (colorSchemeMeta) {
     colorSchemeMeta.content = override ?? 'light dark';
   }
+  if (override === 'dark' || override === 'light') {
+    document.documentElement.dataset.theme = override;
+  } else {
+    delete document.documentElement.dataset.theme;
+  }
 
   const isDark = getEffectiveScheme(override) === 'dark';
   el.themeLabel.textContent = isDark ? 'Claro' : 'Escuro';
@@ -225,54 +209,6 @@ function populateSignGrid() {
   }
 
   el.signGrid.replaceChildren(fragment);
-}
-
-function populateBirthHelperSelects() {
-  const dayFrag = document.createDocumentFragment();
-  for (let d = 1; d <= 31; d += 1) {
-    const opt = document.createElement('option');
-    opt.value = String(d);
-    opt.textContent = String(d);
-    dayFrag.append(opt);
-  }
-  el.birthDay.append(dayFrag);
-
-  const monthFrag = document.createDocumentFragment();
-  MONTH_NAMES.forEach((monthName, idx) => {
-    const opt = document.createElement('option');
-    opt.value = String(idx + 1);
-    opt.textContent = monthName;
-    monthFrag.append(opt);
-  });
-  el.birthMonth.append(monthFrag);
-}
-
-function updateBirthResult() {
-  const day = Number(el.birthDay.value);
-  const month = Number(el.birthMonth.value);
-
-  if (!day || !month) {
-    el.birthResult.hidden = true;
-    el.btnConfirmBirthSign.hidden = true;
-    el.btnConfirmBirthSign.removeAttribute('data-sign-id');
-    return;
-  }
-
-  const sign = getSignByBirthDate(day, month);
-  el.birthResult.hidden = false;
-
-  if (!sign) {
-    el.birthResultIcon.innerHTML = '';
-    el.birthResultText.textContent = 'Essa data não existe no calendário. Escolha outro dia.';
-    el.btnConfirmBirthSign.hidden = true;
-    el.btnConfirmBirthSign.removeAttribute('data-sign-id');
-    return;
-  }
-
-  el.birthResultIcon.innerHTML = renderZodiacSvg(sign.id);
-  el.birthResultText.textContent = `Seu signo é ${sign.name} (${sign.range}).`;
-  el.btnConfirmBirthSign.dataset.signId = sign.id;
-  el.btnConfirmBirthSign.hidden = false;
 }
 
 function renderDailyExtras(signId, dateISO) {
@@ -544,9 +480,14 @@ function bindEvents() {
 
   el.btnTheme.addEventListener('click', toggleColorScheme);
 
-  systemDarkQuery.addEventListener('change', () => {
+  const onSystemSchemeChange = () => {
     syncColorSchemeUi();
-  });
+  };
+  if (typeof systemDarkQuery.addEventListener === 'function') {
+    systemDarkQuery.addEventListener('change', onSystemSchemeChange);
+  } else if (typeof systemDarkQuery.addListener === 'function') {
+    systemDarkQuery.addListener(onSystemSchemeChange);
+  }
 
   window.addEventListener('storage', (event) => {
     if (event.key === null || event.key === 'horoscopo_v1_color_scheme') {
@@ -579,19 +520,10 @@ function bindEvents() {
   });
 
   el.signGrid.addEventListener('click', (event) => {
-    const card = event.target.closest('.sign-card');
+    const target = event.target instanceof Element ? event.target : event.target?.parentElement;
+    const card = target ? target.closest('.sign-card') : null;
     if (!card) return;
     const signId = card.dataset.signId;
-    if (signId) {
-      showMainView(signId, { moveFocus: true });
-    }
-  });
-
-  el.birthDay.addEventListener('change', updateBirthResult);
-  el.birthMonth.addEventListener('change', updateBirthResult);
-
-  el.btnConfirmBirthSign.addEventListener('click', () => {
-    const signId = el.btnConfirmBirthSign.dataset.signId;
     if (signId) {
       showMainView(signId, { moveFocus: true });
     }
@@ -602,7 +534,8 @@ function bindEvents() {
   });
 
   el.tabsBar.addEventListener('click', (event) => {
-    const tab = event.target.closest('[role="tab"]');
+    const target = event.target instanceof Element ? event.target : event.target?.parentElement;
+    const tab = target ? target.closest('[role="tab"]') : null;
     if (!tab) return;
     const period = tab.dataset.period;
     if (period && period !== state.period) {
@@ -639,7 +572,8 @@ function bindEvents() {
   });
 
   el.cityList.addEventListener('click', (event) => {
-    const option = event.target.closest('.city-option');
+    const target = event.target instanceof Element ? event.target : event.target?.parentElement;
+    const option = target ? target.closest('.city-option') : null;
     if (!option) return;
     const nextCityId = getCityById(option.dataset.cityId).id;
     state.cityId = nextCityId;
@@ -719,7 +653,6 @@ function init() {
   syncColorSchemeUi();
   renderHeaderDate();
   populateSignGrid();
-  populateBirthHelperSelects();
   populateCityDialog();
   bindEvents();
   registerServiceWorker();

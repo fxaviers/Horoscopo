@@ -8,23 +8,23 @@ const MAX_CHUNK_CHARS = 420;
 const REQUEST_TIMEOUT_MS = 10000;
 
 const SIGN_REPLACEMENTS = [
-  [/(?<![\p{L}\p{N}])(?:aries|áries)(?![\p{L}\p{N}])/giu, 'Áries'],
-  [/(?<![\p{L}\p{N}])(?:taurus|touro)(?![\p{L}\p{N}])/giu, 'Touro'],
-  [/(?<![\p{L}\p{N}])(?:gemini|gêmeos|gemeos)(?![\p{L}\p{N}])/giu, 'Gêmeos'],
-  [/(?<![\p{L}\p{N}])(?:cancer|câncer)(?![\p{L}\p{N}])/giu, 'Câncer'],
-  [/(?<![\p{L}\p{N}])(?:leo|leão|leao)(?![\p{L}\p{N}])/giu, 'Leão'],
-  [/(?<![\p{L}\p{N}])virgo(?![\p{L}\p{N}])/giu, 'Virgem'],
-  [/(?<![\p{L}\p{N}])Virgem(?![\p{L}\p{N}])/gu, 'Virgem'],
-  [/(?<![\p{L}\p{N}])(para|de|em|como|signo de|nativos de)\s+virgem(?![\p{L}\p{N}])/giu, '$1 Virgem'],
-  [/(?<![\p{L}\p{N}])Libra(?![\p{L}\p{N}])/gu, 'Libra'],
-  [/(?<![\p{L}\p{N}])(para|de|em|como|signo de|nativos de)\s+libra(?![\p{L}\p{N}])/giu, '$1 Libra'],
-  [/(?<![\p{L}\p{N}])(?:scorpio|escorpião|escorpiao)(?![\p{L}\p{N}])/giu, 'Escorpião'],
-  [/(?<![\p{L}\p{N}])(?:sagittarius|sagitário|sagitario)(?![\p{L}\p{N}])/giu, 'Sagitário'],
-  [/(?<![\p{L}\p{N}])(?:capricorn|capricórnio|capricornio)(?![\p{L}\p{N}])/giu, 'Capricórnio'],
-  [/(?<![\p{L}\p{N}])(?:aquarius|aquário|aquario)(?![\p{L}\p{N}])/giu, 'Aquário'],
-  [/(?<![\p{L}\p{N}])pisces(?![\p{L}\p{N}])/giu, 'Peixes'],
-  [/(?<![\p{L}\p{N}])Peixes(?![\p{L}\p{N}])/gu, 'Peixes'],
-  [/(?<![\p{L}\p{N}])(para|de|em|como|signo de|nativos de)\s+peixes(?![\p{L}\p{N}])/giu, '$1 Peixes'],
+  [/(^|[^\p{L}\p{N}])(?:aries|áries)(?![\p{L}\p{N}])/giu, '$1Áries'],
+  [/(^|[^\p{L}\p{N}])(?:taurus|touro)(?![\p{L}\p{N}])/giu, '$1Touro'],
+  [/(^|[^\p{L}\p{N}])(?:gemini|gêmeos|gemeos)(?![\p{L}\p{N}])/giu, '$1Gêmeos'],
+  [/(^|[^\p{L}\p{N}])(?:cancer|câncer)(?![\p{L}\p{N}])/giu, '$1Câncer'],
+  [/(^|[^\p{L}\p{N}])(?:leo|leão|leao)(?![\p{L}\p{N}])/giu, '$1Leão'],
+  [/(^|[^\p{L}\p{N}])virgo(?![\p{L}\p{N}])/giu, '$1Virgem'],
+  [/(^|[^\p{L}\p{N}])Virgem(?![\p{L}\p{N}])/gu, '$1Virgem'],
+  [/(^|[^\p{L}\p{N}])(para|de|em|como|signo de|nativos de)\s+virgem(?![\p{L}\p{N}])/giu, '$1$2 Virgem'],
+  [/(^|[^\p{L}\p{N}])Libra(?![\p{L}\p{N}])/gu, '$1Libra'],
+  [/(^|[^\p{L}\p{N}])(para|de|em|como|signo de|nativos de)\s+libra(?![\p{L}\p{N}])/giu, '$1$2 Libra'],
+  [/(^|[^\p{L}\p{N}])(?:scorpio|escorpião|escorpiao)(?![\p{L}\p{N}])/giu, '$1Escorpião'],
+  [/(^|[^\p{L}\p{N}])(?:sagittarius|sagitário|sagitario)(?![\p{L}\p{N}])/giu, '$1Sagitário'],
+  [/(^|[^\p{L}\p{N}])(?:capricorn|capricórnio|capricornio)(?![\p{L}\p{N}])/giu, '$1Capricórnio'],
+  [/(^|[^\p{L}\p{N}])(?:aquarius|aquário|aquario)(?![\p{L}\p{N}])/giu, '$1Aquário'],
+  [/(^|[^\p{L}\p{N}])pisces(?![\p{L}\p{N}])/giu, '$1Peixes'],
+  [/(^|[^\p{L}\p{N}])Peixes(?![\p{L}\p{N}])/gu, '$1Peixes'],
+  [/(^|[^\p{L}\p{N}])(para|de|em|como|signo de|nativos de)\s+peixes(?![\p{L}\p{N}])/giu, '$1$2 Peixes'],
 ];
 
 const API_ERROR_PATTERN =
@@ -85,7 +85,7 @@ export function normalizeAstrologyPtBr(text) {
     .replace(/\n{3,}/g, '\n\n')
     .replace(/ +([,.;:!?])/g, '$1')
     .replace(/([,;!?])([^\s\d"”’')».,!?])/g, '$1 $2')
-    .replace(/(?<!\.)\.([^\s\d"”’')».,!?])/g, '. $1')
+    .replace(/(^|[^.])\.([^\s\d"”’')».,!?])/g, '$1. $2')
     .trim();
 
   return out;
@@ -140,7 +140,9 @@ function splitIntoChunks(text, maxLen = MAX_CHUNK_CHARS) {
   if (!clean) return [];
   if (clean.length <= maxLen) return [clean];
 
-  const pieces = clean.split(/(?<=[.!?])\s+/).filter(Boolean);
+  const pieces = (clean.match(/[^.!?]+(?:[.!?]+|$)/g) || [clean])
+    .map((s) => s.trim())
+    .filter(Boolean);
   const chunks = [];
   let current = '';
 
