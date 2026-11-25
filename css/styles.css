@@ -1,0 +1,939 @@
+:root {
+  color-scheme: light dark;
+
+  &:has(> head > meta[name="color-scheme"][content="dark"]) {
+    color-scheme: dark;
+  }
+
+  &:has(> head > meta[name="color-scheme"][content="light"]) {
+    color-scheme: light;
+  }
+
+  --font-scale: 1;
+
+  --bg: light-dark(#FAF6EE, #121622);
+  --surface: light-dark(#FFFDF9, #1C2234);
+  --surface-soft: light-dark(#F3ECDF, #242C42);
+  --surface-hover: light-dark(#EDE2CF, #2B344E);
+  --text: light-dark(#241B15, #F5EFE6);
+  --text-muted: light-dark(#5A4A3E, #C8BFB2);
+  --accent: light-dark(#9A4D18, #F0B96B);
+  --accent-contrast: light-dark(#FFFDF9, #121622);
+  --accent-soft: light-dark(#F7E8D6, #2B2A29);
+  --border: light-dark(#DFD1BD, #323C58);
+  --border-strong: light-dark(#C2AA8A, #4A577D);
+  --notice-bg: light-dark(#F7EAD5, #28241F);
+  --notice-border: light-dark(#9A4D18, #F0B96B);
+  --card-shadow: light-dark(0 2px 10px rgb(36 27 21 / 0.06), 0 4px 16px rgb(0 0 0 / 0.35));
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+  font-size: calc(1.125rem * var(--font-scale, 1));
+  line-height: 1.5;
+  overflow-wrap: break-word;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+h3,
+p,
+dl,
+dd,
+ul {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+button,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+:where(a, button, select, [tabindex]):focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  inset-block-start: -100%;
+  inset-inline-start: 1rem;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  inset-block-start: 1rem;
+}
+
+/* App Shell */
+.app-shell {
+  inline-size: 100%;
+  max-inline-size: 52rem;
+  margin-inline: auto;
+  padding-block: 1rem calc(2.5rem + env(safe-area-inset-bottom, 0px));
+  padding-inline: max(1rem, env(safe-area-inset-left, 0px)) max(1rem, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: 1.35rem;
+}
+
+/* Header & Persistent Controls */
+.app-header {
+  padding-block-end: 0.75rem;
+  border-block-end: 1px solid var(--border);
+}
+
+.header-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.875rem 1rem;
+}
+
+.greeting-block {
+  min-inline-size: 0;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.greeting-text {
+  font-size: calc(1.35rem * var(--font-scale, 1));
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.25;
+}
+
+.today-date {
+  font-size: calc(0.95rem * var(--font-scale, 1));
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.header-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  max-inline-size: 100%;
+}
+
+.font-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.ctrl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-inline-size: 3rem;
+  min-block-size: 3rem;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background-color: var(--surface);
+  color: var(--text);
+  font-size: calc(0.95rem * var(--font-scale, 1));
+  font-weight: 700;
+  line-height: 1.15;
+  transition: background-color 140ms ease, border-color 140ms ease;
+}
+
+.ctrl-btn:hover:not(:disabled) {
+  background-color: var(--surface-hover);
+}
+
+.ctrl-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ctrl-icon {
+  inline-size: 1.15em;
+  block-size: 1.15em;
+  flex-shrink: 0;
+}
+
+.install-btn {
+  border-color: var(--accent);
+  background-color: var(--accent-soft);
+  color: var(--text);
+}
+
+/* Shared Typography & Buttons */
+.app-main {
+  display: grid;
+  gap: 1.5rem;
+  min-inline-size: 0;
+}
+
+.app-main:focus {
+  outline: none;
+}
+
+.page-title {
+  font-size: calc(1.65rem * var(--font-scale, 1));
+  font-weight: 750;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.section-heading {
+  font-size: calc(1.2rem * var(--font-scale, 1));
+  font-weight: 700;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.primary-btn,
+.secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 3rem;
+  padding: 0.65rem 1.15rem;
+  border-radius: 0.875rem;
+  font-size: calc(0.975rem * var(--font-scale, 1));
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  transition: background-color 140ms ease, border-color 140ms ease;
+}
+
+.primary-btn {
+  border: 2px solid var(--accent);
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.primary-btn:hover {
+  filter: brightness(1.06);
+}
+
+.secondary-btn {
+  border: 1px solid var(--border-strong);
+  background-color: var(--surface);
+  color: var(--text);
+}
+
+.secondary-btn:hover {
+  background-color: var(--surface-hover);
+}
+
+/* View 1: Sign Picker */
+.view-picker {
+  display: grid;
+  gap: 1.35rem;
+  min-inline-size: 0;
+}
+
+.picker-intro {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.picker-subtitle,
+.helper-hint {
+  color: var(--text-muted);
+  font-size: calc(1rem * var(--font-scale, 1));
+}
+
+.sign-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.sign-grid > li {
+  min-inline-size: 0;
+  display: flex;
+}
+
+.sign-card {
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 4.75rem;
+  padding: 0.85rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 1.125rem;
+  background-color: var(--surface);
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  text-align: center;
+  transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+.sign-card:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--accent);
+}
+
+.sign-card:active {
+  transform: scale(0.985);
+}
+
+.sign-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  color: var(--accent);
+}
+
+.zodiac-svg {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.sign-card-name {
+  font-size: calc(1.0625rem * var(--font-scale, 1));
+  font-weight: 700;
+  line-height: 1.25;
+  max-inline-size: 100%;
+  overflow-wrap: break-word;
+}
+
+.sign-card-range {
+  font-size: calc(0.84rem * var(--font-scale, 1));
+  color: var(--text-muted);
+  line-height: 1.25;
+}
+
+/* Birth Date Helper */
+.birth-helper {
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 1.125rem;
+  background-color: var(--surface);
+  box-shadow: var(--card-shadow);
+  display: grid;
+  gap: 0.875rem;
+}
+
+.birth-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+  gap: 0.875rem;
+}
+
+.field-group {
+  display: grid;
+  gap: 0.375rem;
+  min-inline-size: 0;
+}
+
+.field-group label {
+  font-weight: 700;
+  font-size: calc(0.95rem * var(--font-scale, 1));
+}
+
+.select-input {
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 3rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.75rem;
+  background-color: var(--bg);
+  color: var(--text);
+  font-size: calc(1rem * var(--font-scale, 1));
+}
+
+.birth-result {
+  padding: 1rem;
+  border: 1px solid var(--accent);
+  border-radius: 0.875rem;
+  background-color: var(--accent-soft);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.875rem;
+}
+
+.birth-result-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-inline-size: 0;
+}
+
+.birth-result-icon {
+  inline-size: 2rem;
+  block-size: 2rem;
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+.birth-result-text {
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+/* View 2: Main Horoscope View */
+.view-main {
+  display: grid;
+  gap: 1.5rem;
+  min-inline-size: 0;
+}
+
+.sign-banner {
+  padding: 1.125rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  background-color: var(--surface);
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.875rem 1rem;
+}
+
+.sign-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  min-inline-size: 0;
+}
+
+.active-sign-icon {
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  padding: 0.45rem;
+  border-radius: 0.875rem;
+  background-color: var(--accent-soft);
+  color: var(--accent);
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sign-titles {
+  min-inline-size: 0;
+  display: grid;
+  gap: 0.15rem;
+}
+
+.active-sign-name {
+  font-size: calc(1.55rem * var(--font-scale, 1));
+  font-weight: 750;
+  line-height: 1.2;
+}
+
+.active-sign-name:focus {
+  outline: none;
+}
+
+.active-sign-range {
+  font-size: calc(0.95rem * var(--font-scale, 1));
+  color: var(--text-muted);
+}
+
+/* Period Tabs (strictly no layout shift, ::after border indicator, inner panel wrapper) */
+.forecast-section {
+  display: grid;
+  gap: 0.75rem;
+  min-inline-size: 0;
+}
+
+.tabs-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  border-block-end: 1px solid var(--border);
+}
+
+.tab-btn {
+  position: relative;
+  flex: 1 1 0;
+  min-inline-size: max-content;
+  min-block-size: 3rem;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: 0.75rem 0.75rem 0 0;
+  background-color: transparent;
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: calc(1.05rem * var(--font-scale, 1));
+  line-height: 1.2;
+  text-align: center;
+  transition: color 140ms ease, background-color 140ms ease;
+}
+
+.tab-btn:hover {
+  background-color: var(--surface-soft);
+  color: var(--text);
+}
+
+.tab-btn[aria-selected="true"] {
+  color: var(--accent);
+}
+
+.tab-btn[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0.5rem;
+  inset-block-end: 0;
+  border-block-end: 3px solid currentColor;
+}
+
+.tab-panel {
+  min-inline-size: 0;
+}
+
+.tab-panel:focus {
+  outline: none;
+}
+
+.tab-panel:focus-visible > .tab-panel-card {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.tab-panel-card {
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  background-color: var(--surface);
+  box-shadow: var(--card-shadow);
+  display: grid;
+  gap: 1rem;
+}
+
+.forecast-body {
+  display: grid;
+  gap: 1rem;
+  max-inline-size: 62ch;
+}
+
+.forecast-body p {
+  line-height: 1.7;
+}
+
+.loading-text {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.offline-notice {
+  padding: 0.75rem 1rem;
+  border-inline-start: 4px solid var(--notice-border);
+  border-radius: 0.5rem;
+  background-color: var(--notice-bg);
+  color: var(--text);
+  font-size: calc(0.95rem * var(--font-scale, 1));
+  line-height: 1.5;
+}
+
+/* Daily Extras (Cor, Número, Energia) */
+.extras-section {
+  display: grid;
+  gap: 0.875rem;
+  min-inline-size: 0;
+}
+
+.extras-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+.extra-card {
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--border);
+  border-radius: 1.125rem;
+  background-color: var(--surface);
+  box-shadow: var(--card-shadow);
+  display: grid;
+  gap: 0.45rem;
+  align-content: center;
+  min-inline-size: 0;
+}
+
+.extra-label {
+  font-size: calc(0.9rem * var(--font-scale, 1));
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.extra-value {
+  font-size: calc(1.15rem * var(--font-scale, 1));
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.extra-number {
+  font-size: calc(1.45rem * var(--font-scale, 1));
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.color-value {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-inline-size: 0;
+}
+
+.color-swatch {
+  display: inline-block;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2px solid var(--swatch-border, var(--border-strong));
+  background-color: var(--swatch-bg, var(--accent));
+  forced-color-adjust: none;
+}
+
+/* Moon and Sun Section */
+.astro-section {
+  display: grid;
+  gap: 0.875rem;
+  min-inline-size: 0;
+}
+
+.astro-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+}
+
+.astro-title-group {
+  display: grid;
+  gap: 0.15rem;
+  min-inline-size: 0;
+}
+
+.astro-city-label {
+  font-size: calc(0.975rem * var(--font-scale, 1));
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.astro-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+.astro-card {
+  padding: 1.125rem;
+  border: 1px solid var(--border);
+  border-radius: 1.125rem;
+  background-color: var(--surface);
+  box-shadow: var(--card-shadow);
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  min-inline-size: 0;
+}
+
+.astro-card-title {
+  font-size: calc(1rem * var(--font-scale, 1));
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.moon-today-body,
+.next-moon-body {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  min-inline-size: 0;
+}
+
+.moon-svg-slot {
+  inline-size: 4.5rem;
+  block-size: 4.5rem;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.moon-svg {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.next-moon-badge {
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  flex-shrink: 0;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.phase-badge-svg {
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.moon-today-info,
+.next-moon-info {
+  display: grid;
+  gap: 0.2rem;
+  min-inline-size: 0;
+}
+
+.astro-primary {
+  font-size: calc(1.125rem * var(--font-scale, 1));
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.astro-secondary {
+  font-size: calc(0.975rem * var(--font-scale, 1));
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.astro-meta {
+  font-size: calc(0.925rem * var(--font-scale, 1));
+  color: var(--accent);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.sun-times-list {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.sun-time-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+  padding-block-end: 0.45rem;
+  border-block-end: 1px solid var(--border);
+}
+
+.sun-time-row:last-child {
+  padding-block-end: 0;
+  border-block-end: 0;
+}
+
+.sun-time-row dt {
+  font-size: calc(0.95rem * var(--font-scale, 1));
+  color: var(--text-muted);
+}
+
+.sun-time-row dd {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Native City Selection Dialog (NEVER set display on dialog without [open]) */
+.city-dialog {
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 1.25rem;
+  background-color: var(--surface);
+  color: var(--text);
+  inline-size: min(34rem, calc(100vw - 1.5rem));
+  max-inline-size: calc(100vw - 1.5rem);
+  max-block-size: calc(100dvh - 2rem);
+  margin: auto;
+  box-shadow: 0 18px 48px rgb(0 0 0 / 0.35);
+}
+
+.city-dialog:modal {
+  overscroll-behavior: contain;
+}
+
+.city-dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background-color: rgb(12 16 26 / 0.62);
+}
+
+.city-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.city-dialog-surface {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding: 1.25rem;
+  min-block-size: 0;
+  max-block-size: calc(100dvh - 2rem);
+}
+
+.city-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.city-dialog-hint {
+  font-size: calc(0.95rem * var(--font-scale, 1));
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.city-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-inline-end: 0.25rem;
+  min-block-size: 0;
+}
+
+.city-option {
+  inline-size: 100%;
+  min-block-size: 3.25rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.875rem;
+  background-color: var(--bg);
+  color: var(--text);
+  font-size: calc(1rem * var(--font-scale, 1));
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  text-align: start;
+}
+
+.city-option:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--accent);
+}
+
+.city-option[aria-pressed="true"] {
+  border: 2px solid var(--accent);
+  background-color: var(--accent-soft);
+  font-weight: 700;
+}
+
+.city-check {
+  color: var(--accent);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Responsive Desktop Breakpoints */
+@media (min-width: 34rem) {
+  .sign-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .extras-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .city-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 48rem) {
+  .app-shell {
+    padding-block-start: 1.5rem;
+  }
+
+  .astro-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Forced Colors / High Contrast Mode */
+@media (forced-colors: active) {
+  .ctrl-btn,
+  .primary-btn,
+  .secondary-btn,
+  .sign-card,
+  .birth-helper,
+  .sign-banner,
+  .tab-panel-card,
+  .extra-card,
+  .astro-card,
+  .city-dialog,
+  .city-option,
+  .offline-notice {
+    border-color: CanvasText;
+  }
+
+  .tab-btn[aria-selected="true"]::after {
+    border-block-end-color: Highlight;
+  }
+
+  .city-option[aria-pressed="true"],
+  .sign-card:hover {
+    border-color: Highlight;
+  }
+
+  :where(a, button, select, [tabindex]):focus-visible {
+    outline: 3px solid Highlight;
+    outline-offset: 2px;
+  }
+}

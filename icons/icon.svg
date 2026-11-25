@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#1B2338" />
+  <rect x="22" y="22" width="468" height="468" rx="94" fill="none" stroke="#283454" stroke-width="3" />
+  <!-- Lua crescente dourada (lado esquerdo iluminado — Hemisfério Sul) -->
+  <path
+    d="M 316.18 103.99 A 162.74 162.74 0 1 0 364.67 378.96 A 140.08 140.08 0 1 1 316.18 103.99 Z"
+    fill="#F0B96B"
+  />
+  <!-- Estrela principal creme-dourado -->
+  <path
+    d="M 359.00 165.36 Q 363.94 203.68 402.26 208.62 Q 363.94 213.56 359.00 251.88 Q 354.06 213.56 315.74 208.62 Q 354.06 203.68 359.00 165.36 Z"
+    fill="#FAF6EE"
+  />
+  <!-- Estrela secundária e ponto de luz -->
+  <path
+    d="M 396.08 270.42 Q 398.14 284.84 412.56 286.90 Q 398.14 288.96 396.08 303.38 Q 394.02 288.96 379.60 286.90 Q 394.02 284.84 396.08 270.42 Z"
+    fill="#FAF6EE"
+  />
+  <circle cx="315.74" cy="138.58" r="5.67" fill="#FAF6EE" />
+</svg>
