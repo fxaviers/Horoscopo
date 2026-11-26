@@ -24,12 +24,12 @@ jobs:
 
     steps:
       - name: Checkout do repositório
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - name: Configurar Node.js 20
-        uses: actions/setup-node@v4
+      - name: Configurar Node.js 24
+        uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Executar pipeline de coleta e tradução (pt-BR)
         env:
@@ -37,23 +37,41 @@ jobs:
           MYMEMORY_EMAIL: ${{ secrets.MYMEMORY_EMAIL }}
           FORCE_UPDATE: ${{ inputs.force }}
         run: |
-          if [ "${FORCE_UPDATE}" = "true" ]; then
-            node horoscopo/scripts/update-horoscopo.mjs --force
+          if [ -f "scripts/update-horoscopo.mjs" ]; then
+            SCRIPT_PATH="scripts/update-horoscopo.mjs"
+          elif [ -f "horoscopo/scripts/update-horoscopo.mjs" ]; then
+            SCRIPT_PATH="horoscopo/scripts/update-horoscopo.mjs"
           else
-            node horoscopo/scripts/update-horoscopo.mjs
+            echo "Erro: update-horoscopo.mjs não encontrado na raiz nem em horoscopo/." >&2
+            exit 1
+          fi
+
+          if [ "${FORCE_UPDATE}" = "true" ]; then
+            node "${SCRIPT_PATH}" --force
+          else
+            node "${SCRIPT_PATH}"
           fi
 
       - name: Commit e push se horoscopo.json mudou
         env:
           TARGET_BRANCH: ${{ github.ref_name }}
         run: |
-          if [ -n "$(git status --porcelain -- horoscopo/data/horoscopo.json)" ]; then
+          if [ -f "scripts/update-horoscopo.mjs" ]; then
+            DATA_PATH="data/horoscopo.json"
+          elif [ -f "horoscopo/scripts/update-horoscopo.mjs" ]; then
+            DATA_PATH="horoscopo/data/horoscopo.json"
+          else
+            echo "Erro: pasta de dados não encontrada." >&2
+            exit 1
+          fi
+
+          if [ -n "$(git status --porcelain -- "${DATA_PATH}")" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add horoscopo/data/horoscopo.json
+            git add "${DATA_PATH}"
             git commit -m "chore(horoscopo): atualizar previsões em pt-BR"
             git pull --rebase origin "${TARGET_BRANCH}"
             git push origin "HEAD:${TARGET_BRANCH}"
           else
-            echo "Nenhuma alteração em horoscopo/data/horoscopo.json."
+            echo "Nenhuma alteração em ${DATA_PATH}."
           fi
