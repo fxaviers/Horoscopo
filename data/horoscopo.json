@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-26T18:07:52.196Z",
-  "date": "2026-11-26",
+  "generatedAt": "2026-11-27T16:39:04.894Z",
+  "date": "2026-11-27",
   "weekOf": "2026-11-23",
   "month": "2026-11",
   "source": "freehoroscopeapi.com",
   "translation": {
-    "provider": "google-gtx",
+    "provider": "mixed",
     "lang": "pt-BR"
   },
   "signs": {
     "aries": {
       "daily": {
-        "date": "2026-11-26",
-        "text": "É provável que as coisas estejam bastante ocupadas para Áries hoje, com muitas tarefas e responsabilidades diferentes competindo por atenção. É uma boa ideia priorizar e focar primeiro nas coisas mais importantes, para evitar se sentir sobrecarregado. Algumas pessoas podem buscar orientação ou liderança em Áries, então é um bom momento para avançar e assumir o controle. Com a cabeça limpa e um pouco de planejamento, Áries deve ser capaz de realizar tudo o que precisa ser feito. No geral, parece que será um dia produtivo."
+        "date": "2026-11-27",
+        "text": "É provável que as coisas estejam bastante ocupadas para Áries hoje, com muitas tarefas e responsabilidades diferentes competindo por atenção. É uma boa ideia priorizar e focar primeiro nas coisas mais importantes, para evitar se sentir sobrecarregado. Algumas notícias ou desenvolvimentos inesperados também podem surgir, exigindo um pouco de flexibilidade e adaptabilidade. No geral, é um dia para se manter organizado e preparado para qualquer coisa que possa surgir. Ao ficar por dentro de tudo, Áries pode aproveitar ao máximo as oportunidades do dia."
       },
       "weekly": {
         "date": "2026-11-23",
@@ -26,8 +26,8 @@
     },
     "taurus": {
       "daily": {
-        "date": "2026-11-26",
-        "text": "Touro, hoje você pode se sentir um pouco mais extrovertido do que o normal, o que pode levar a algumas conversas e conexões interessantes. É provável que você esteja com disposição social, então aproveite as oportunidades para conhecer novas pessoas ou conversar com amigos. No trabalho ou na rotina diária, talvez você precise se adaptar a algumas mudanças ou surpresas inesperadas. Tente permanecer flexível e seguir o fluxo, pois isso o ajudará a enfrentar quaisquer desafios que surgirem em seu caminho. No geral, é um bom dia para estar aberto a novas experiências e perspectivas."
+        "date": "2026-11-27",
+        "text": "As pessoas ao seu redor podem estar agindo rapidamente, mas esse não é realmente o seu estilo, e não há problema em demorar. É provável que você se concentre em questões práticas e em fazer as coisas de uma forma que pareça estável e segura. Este é um bom dia para realizar tarefas que exigem paciência e atenção aos detalhes. Você também pode pensar em seus objetivos de longo prazo e em como progredir em direção a eles. Sua abordagem constante pode ajudá-lo a fazer progressos reais, mesmo que nem sempre pareça chamativo ou excitante."
       },
       "weekly": {
         "date": "2026-11-23",
@@ -40,8 +40,8 @@
     },
     "gemini": {
       "daily": {
-        "date": "2026-11-26",
-        "text": "As coisas estão melhorando para os geminianos hoje, com um senso de clareza e propósito que tem faltado ultimamente. Você é capaz de realizar tarefas e tomar decisões com uma nova confiança. Este é um bom momento para se concentrar nas coisas que precisam ser feitas e você provavelmente fará algum progresso real. Sua vida social pode ficar em segundo plano por enquanto, mas tudo bem – você terá tempo para isso mais tarde. Por enquanto, apenas mantenha a cabeça baixa e siga em frente."
+        "date": "2026-11-27",
+        "text": "Para os geminianos, hoje é um bom dia para focar nas tarefas que tem em mãos e tentar evitar distrações. Você pode sentir uma forte necessidade de assumir novos projetos, mas é melhor terminar o que já começou. Suas habilidades de comunicação são aguçadas e você pode usá-las para esclarecer quaisquer mal-entendidos ou negociar com outras pessoas. Também é um bom momento para pensar nos seus objetivos de longo prazo e fazer planos para alcançá-los. Mantendo-se focado e organizado, você poderá aproveitar ao máximo as oportunidades do dia."
       },
       "weekly": {
         "date": "2026-11-23",
@@ -54,8 +54,8 @@
     },
     "cancer": {
       "daily": {
-        "date": "2026-11-26",
-        "text": "As pessoas ao seu redor podem estar inquietas e impacientes hoje, mas é provável que você esteja mais descontraído e tranquilo. Você pode acabar desempenhando o papel de pacificador ou mediador em uma situação difícil. Sua abordagem calma e gentil pode ajudar a acalmar os nervos em frangalhos e reduzir a tensão. É um bom dia para se concentrar em suas próprias necessidades e prioridades e para reservar um tempo para si mesmo, se precisar. No geral, uma abordagem silenciosa e discreta provavelmente será útil para você hoje."
+        "date": "2026-11-27",
+        "text": "As pessoas ao seu redor podem estar inquietas e impacientes hoje, mas é provável que você permaneça calmo e firme. Isto pode ser uma verdadeira vantagem, pois outras pessoas podem recorrer a você em busca de orientação e apoio. Não tenha pressa ao tomar decisões e não deixe ninguém apressá-lo em algo que não parece certo. Sua intuição é forte, então confie em seus instintos e escolha o que for mais confortável para você. No geral, é um bom dia para se concentrar nas suas próprias necessidades e prioridades."
       },
       "weekly": {
         "date": "2026-11-23",
@@ -68,8 +68,8 @@
     },
     "leo": {
       "daily": {
-        "date": "2026-11-26",
-        "text": "Os leoninos podem se encontrar hoje em uma situação social em que precisam equilibrar seus próprios desejos com as necessidades dos outros. Isto pode ser um desafio, mas também é uma oportunidade para mostrar que podem ser flexíveis e compreensivos. No trabalho ou na vida pessoal, os leoninos podem estar procurando maneiras de expressar sua criatividade e individualidade. Eles devem ser capazes de encontrar algumas saídas para isso, seja através de um novo projeto ou de um hobby. No geral, é um bom dia para os leoninos se concentrarem na construção de relacionamentos fortes e na busca de maneiras de trabalhar em conjunto com outras pessoas."
+        "date": "2026-11-27",
+        "text": "Os leoninos podem se sentir um pouco inquietos hoje, procurando algo novo em que se concentrar. Este pode ser um bom momento para experimentar um novo hobby ou atividade, pois isso pode ajudar a canalizar parte dessa energia extra. Em situações sociais, é provável que os leoninos sejam charmosos como de costume, mas talvez precisem se esforçar para ouvir os outros e não dominar a conversa. No trabalho ou na escola, uma abordagem criativa para um problema pode ser exatamente o que é preciso para fazer as coisas acontecerem. No geral, é um dia para se manter envolvido e buscar oportunidades de se expressar."
       },
       "weekly": {
         "date": "2026-11-23",
@@ -82,8 +82,8 @@
     },
     "virgo": {
       "daily": {
-        "date": "2026-11-26",
-        "text": "Para Virgem, hoje é um bom dia para focar nos detalhes e se organizar. Você pode sentir vontade de arrumar e entender o que está ao seu redor. Este também é um bom momento para revisar sua programação e fazer os ajustes necessários. É provável que você se sinta mais produtivo e no controle quando tiver um plano claro em vigor. Ao cuidar dessas tarefas práticas, você poderá relaxar e aproveitar o resto do dia."
+        "date": "2026-11-27",
+        "text": "Para Virgem, hoje é um bom dia para focar nos detalhes de um projeto ou tarefa que precisa de atenção. Cuidar de assuntos pequenos, mas importantes, pode ajudar as coisas a funcionarem melhor no longo prazo. Também é um bom momento para pensar em como você pode melhorar suas rotinas diárias e torná-las mais eficientes. Pode ser necessário fazer alguns ajustes para acertar as coisas, mas valerá a pena o esforço. Sendo minucioso e meticuloso, você pode progredir e se sentir mais no controle."
       },
       "weekly": {
         "date": "2026-11-23",
@@ -96,8 +96,8 @@
     },
     "libra": {
       "daily": {
-        "date": "2026-11-26",
-        "text": "As coisas podem parecer um pouco incertas para os librianos hoje, com alguns sinais confusos vindos das pessoas ao seu redor. É uma boa ideia dar um passo atrás e tentar ter uma noção mais clara do que está acontecendo antes de tomar qualquer decisão importante. A comunicação é fundamental, por isso faça um esforço para ouvir com atenção e fazer perguntas se algo não parecer certo. Ao fazer isso, Libras pode evitar mal-entendidos e encontrar um caminho a seguir que funcione para todos. Este é um dia para priorizar clareza e paciência."
+        "date": "2026-11-27",
+        "text": "Os librianos podem se encontrar hoje em uma situação social em que precisam navegar por diferentes personalidades e opiniões. É uma boa ideia manter a calma e ouvir o que os outros têm a dizer, mesmo que você não concorde com eles. Você pode se surpreender com uma nova perspectiva ou insight que não havia considerado antes. Ao ser aberto e imparcial, você pode ajudar a criar uma atmosfera mais positiva e harmoniosa. Essa abordagem também pode ajudá-lo a construir relacionamentos mais fortes com as pessoas ao seu redor."
       },
       "weekly": {
         "date": "2026-11-23",
@@ -110,8 +110,8 @@
     },
     "scorpio": {
       "daily": {
-        "date": "2026-11-26",
-        "text": "Para os escorpianos, hoje é um bom dia para focar nas coisas que precisam ser feitas. Você tem adiado algumas tarefas e agora é a hora de enfrentá-las de frente. Seu trabalho duro e determinação serão recompensados no longo prazo, mesmo que não pareça agora. Também é uma boa ideia reservar um tempo para si e recarregar as baterias. Ao fazer isso, você será capaz de abordar suas tarefas com a cabeça clara e equilibrada."
+        "date": "2026-11-27",
+        "text": "Os escorpianos podem se sentir mais extrovertidos do que o normal hoje, o que pode levar a algumas conversas e conexões interessantes com outras pessoas. Este é um bom momento para entrar em contato com amigos ou conhecidos e colocar em dia a vida uns dos outros. No trabalho ou em outras áreas da vida, os escorpianos podem encontrar soluções criativas para problemas que os intrigam. Também é possível que surja uma nova oportunidade ou ideia e os escorpianos estejam abertos para explorá-la. No geral, hoje é um bom dia para ser social e interagir com o mundo ao seu redor."
       },
       "weekly": {
         "date": "2026-11-23",
@@ -124,8 +124,8 @@
     },
     "sagittarius": {
       "daily": {
-        "date": "2026-11-26",
-        "text": "É provável que as coisas estejam bastante ocupadas para os sagitarianos hoje, com muitas tarefas e responsabilidades diferentes competindo por atenção. É uma boa ideia priorizar e focar primeiro nas coisas mais importantes, para evitar se sentir sobrecarregado. Apesar do caos, há uma sensação de otimismo e possibilidades no ar, e os sagitarianos podem sentir-se mais esperançosos e entusiasmados do que o normal. Este é um bom momento para pensar em metas de longo prazo e fazer planos para o futuro. No geral, é um dia para se manter organizado e manter uma perspectiva positiva."
+        "date": "2026-11-27",
+        "text": "As coisas estão melhorando para Sagitário hoje, com uma sensação de otimismo e possibilidades no ar. É um bom momento para pensar sobre o que você deseja alcançar e fazer planos para chegar lá. Você pode estar se sentindo um pouco inquieto, então tente canalizar essa energia para algo produtivo. Uma conversa com alguém pode trazer novas informações ou insights que o ajudem a seguir em frente. No geral, é um dia para permanecer positivo e focar no futuro."
       },
       "weekly": {
         "date": "2026-11-23",
@@ -138,8 +138,8 @@
     },
     "capricorn": {
       "daily": {
-        "date": "2026-11-26",
-        "text": "Capricórnio, hoje é um bom dia para se concentrar no trabalho e nas responsabilidades. É provável que você tenha uma mentalidade prática e disciplinada, o que o ajudará a realizar as coisas com eficiência. Não tenha medo de assumir novos desafios e tarefas, pois você está bem equipado para lidar com eles agora. Sua atenção aos detalhes e habilidades organizacionais serão úteis em seus empreendimentos. No geral, é um dia produtivo pela frente, então aproveite ao máximo."
+        "date": "2026-11-27",
+        "text": "É provável que as coisas estejam muito ocupadas para os capricornianos hoje, com muitas tarefas e responsabilidades diferentes competindo por atenção. É uma boa ideia priorizar e focar primeiro nas coisas mais importantes, para ajudar a permanecer no caminho certo. Alguns capricornianos podem estar se sentindo um pouco sobrecarregados ou estressados, mas dar um passo atrás e dividir as coisas em tarefas menores pode ajudar a tornar as coisas mais administráveis. Com algum planejamento cuidadoso e gerenciamento de tempo, é possível realizar muitas tarefas e fazer algum progresso real. No geral, é um dia para se manter organizado e seguir em frente."
       },
       "weekly": {
         "date": "2026-11-23",
@@ -152,8 +152,8 @@
     },
     "aquarius": {
       "daily": {
-        "date": "2026-11-26",
-        "text": "É provável que as coisas estejam bastante calmas para o aquariano hoje, sem grandes dramas ou surpresas no horizonte. Este pode ser um bom momento para colocar em dia algumas tarefas rotineiras ou tarefas que foram adiadas por um tempo. Alguns aquarianos podem se sentir um pouco inquietos ou entediados com a situação atual, mas provavelmente não é o melhor dia para fazer grandes mudanças. É melhor apenas seguir o fluxo e ver o que o amanhã traz. No geral, deve ser um dia calmo e sem intercorrências."
+        "date": "2026-11-27",
+        "text": "As coisas estão melhorando para o Aquário hoje, com uma vibração positiva no ar. Você pode se sentir mais confiante e extrovertido, o que pode levar a algumas conversas e conexões interessantes. Um encontro casual ou um convite inesperado também pode surgir em seu caminho, então esteja aberto a novas experiências. É um bom dia para correr alguns riscos e ver aonde eles levam. No geral, deve ser um dia bastante agradável, com algumas surpresas agradáveis."
       },
       "weekly": {
         "date": "2026-11-23",
@@ -166,8 +166,8 @@
     },
     "pisces": {
       "daily": {
-        "date": "2026-11-26",
-        "text": "As coisas podem parecer um pouco incertas para Peixes hoje, com uma mistura de emoções e pensamentos circulando. É uma boa ideia reservar algum tempo para resolver seus sentimentos e ter uma ideia do que realmente está acontecendo. Você pode precisar tomar uma decisão ou agir em relação a algo, mas tente não se apressar em nada sem pensar bem. Dar um passo para trás e olhar para o panorama geral pode ajudá-lo a fazer uma escolha mais informada. Sendo paciente e atencioso, você pode navegar nessa situação e sair sentindo-se mais fundamentado."
+        "date": "2026-11-27",
+        "text": "Peixes, hoje você pode estar perdido em pensamentos, pensando nos seus objetivos e no que deseja alcançar. É um bom momento para refletir sobre suas prioridades e considerar o que é realmente importante para você. Você também pode estar se sentindo um pouco sensível, então cuide-se e tente evitar situações estressantes. Reservar algum tempo para relaxar e descontrair pode ajudá-lo a limpar a mente e a se sentir mais centrado. No geral, é um dia para focar em suas próprias necessidades e bem-estar."
       },
       "weekly": {
         "date": "2026-11-23",
